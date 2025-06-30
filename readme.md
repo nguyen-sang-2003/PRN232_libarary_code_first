@@ -17,3 +17,21 @@
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
+
+# access token
+
+```
+http://localhost:5138/api/getaccesstoken
+
+{
+    "username": "admin",
+    "password": "admin123"
+}
+
+http://localhost:5138/api/SampleEnityBooks/1
+
+postman
+bulk edit
+
+Authorization:Bearer token
+```
