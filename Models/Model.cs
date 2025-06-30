@@ -128,6 +128,10 @@ public class PrnContext : DbContext
     public DbSet<Book> Books { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<BookCategory> BookCategory { get; set; }
+    public DbSet<BookCopy> BookCopies { get; set; }
+    public DbSet<Rental> Rentals { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Return> Returns { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
