@@ -143,5 +143,41 @@ public class PrnContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<BookCategory>().HasKey(bc => new { bc.BookId, bc.CategoryId });
+        modelBuilder.Entity<Author>().HasData(
+            new Author { Id = 1, Name = "George Orwell" },
+            new Author { Id = 2, Name = "Harper Lee" },
+            new Author { Id = 3, Name = "F. Scott Fitzgerald" }
+        );
+
+        modelBuilder.Entity<Category>().HasData(
+            new Category { Id = 1, Name = "Classic" },
+            new Category { Id = 2, Name = "Dystopian" },
+            new Category { Id = 3, Name = "Drama" }
+        );
+
+        modelBuilder.Entity<Book>().HasData(
+            new Book { Id = 1, Title = "1984", AuthorId = 1, PublishedDate = new DateTime(1949, 6, 8), ImageBase64 = "" },
+            new Book { Id = 2, Title = "To Kill a Mockingbird", AuthorId = 2, PublishedDate = new DateTime(1960, 7, 11), ImageBase64 = "" },
+            new Book { Id = 3, Title = "The Great Gatsby", AuthorId = 3, PublishedDate = new DateTime(1925, 4, 10), ImageBase64 = "" }
+        );
+
+        modelBuilder.Entity<BookCopy>().HasData(
+            new BookCopy { Id = 1, BookId = 1, Status = "available", Condition = "new", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+            new BookCopy { Id = 2, BookId = 1, Status = "unavailable", Condition = "old", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+            new BookCopy { Id = 3, BookId = 2, Status = "available", Condition = "mid", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+            new BookCopy { Id = 4, BookId = 3, Status = "available", Condition = "new", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+        );
+
+        modelBuilder.Entity<User>().HasData(
+            new User { Id = 1, Username = "admin", Password = "admin123", Active = true, Role = "admin" },
+            new User { Id = 2, Username = "john_doe", Password = "password", Active = true, Role = "user" },
+            new User { Id = 3, Username = "librarian", Password = "librarypass", Active = true, Role = "staff" }
+        );
+
+        modelBuilder.Entity<BookCategory>().HasData(
+            new BookCategory { BookId = 1, CategoryId = 2 }, // 1984 - Dystopian
+            new BookCategory { BookId = 2, CategoryId = 3 }, // To Kill a Mockingbird - Drama
+            new BookCategory { BookId = 3, CategoryId = 1 }  // Gatsby - Classic
+        );
     }
 }
