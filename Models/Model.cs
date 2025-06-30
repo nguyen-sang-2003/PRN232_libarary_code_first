@@ -51,6 +51,7 @@ public class Book
     // image 2-4mb bytes => string/base64 png
     public DateTime PublishedDate { get; set; }
     public virtual List<BookCopy> BookCopies { get; set; }
+    public virtual Author Author { get; set; }
 }
 
 public class BookCopy
@@ -75,10 +76,14 @@ public class Rental
     public int UserId { get; set; }
     [ForeignKey("BookCopy")]
     public int BookCopyId { get; set; }
+    public string Status { get; set; }
     public DateTime RentalDate { get; set; }
     public DateTime DueDate { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+
+    public virtual User User { get; set; }
+    public virtual BookCopy Book { get; set; }
 }
 
 public class Return
@@ -91,6 +96,7 @@ public class Return
     public DateTime ReturnDate { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public virtual Rental Rental { get; set; }
 }
 
 public class User
