@@ -1,0 +1,105 @@
+﻿@page
+@model LibararyWebApplication.Pages.IndexModel
+@{
+}
+
+<h1>@Model.current_host</h1>
+<div>
+	<h1>id</h1><div id="id"></div>
+	<h1>title</h1><div id="title"></div>
+
+	<button id="list_using_localstorage_token">list_using_localstorage_token</button>
+	<pre id="data_output">
+
+	</pre>
+</div>
+<div>
+	<h1>list_books_response_json</h1>
+	<pre>@Model.list_books_response_json</pre>
+</div>
+
+
+<script>
+	document.onload = function(){
+		const token = localStorage.getItem("token");
+
+		fetch("/api/SampleEnityBooks/1", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${token}`,
+			}
+		})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error("Request failed");
+			}
+
+			return response.json();
+
+		})
+		.then(data => {
+			console.log("data", data);
+			console.log(data);
+
+			// dict
+			//{"id":1,"title":"1984","authorId":1,"imageBase64":"","publishedDate":"1949-06-08T00:00:00","bookCopies":null,"author":null}
+			let id = data.id;
+			let title = data.title;
+			
+			document.querySelector("#id").innerHTML = id;
+			document.querySelector("#title").innerHTML = title;
+
+			document.querySelector("#data_output").innerHTML = JSON.stringify(data);
+
+
+		})
+		.catch(error => {
+			console.error("Error:", error);
+		});
+	}
+	// web pages -> press button/ timeout 5 secs/ page load -> api requests (js get token from localstorage add to header) -> data -> render/update web pages
+	document.querySelector("#list_using_localstorage_token").addEventListener("click", function () {
+		const token = localStorage.getItem("token");
+
+		// single page application
+		// empty
+
+		fetch("/api/SampleEnityBooks/1", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${token}`,
+			}
+		})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error("Request failed");
+			}
+
+			// local storage/ cookies
+			return response.json();
+			// let token_obj = response.json();
+			// console.log(token_obj);
+			// localStorage.setItem("token", token_obj["access_token"]);
+
+		})
+		.then(data => {
+			console.log("data", data);
+			// You can store or use the access token here
+			// let token_obj = JSON.parse(data);
+			// let token_obj = data;
+			console.log(data);
+			let id = data.id;
+			let title = data.title;
+
+			document.querySelector("#id").innerHTML = id;
+			document.querySelector("#title").innerHTML = title;
+			document.querySelector("#data_output").innerHTML = JSON.stringify(data);
+			// localStorage.setItem("token", token_obj["access_token"]);
+		})
+		.catch(error => {
+			console.error("Error:", error);
+		});
+	});
+</script>

@@ -1,0 +1,51 @@
+﻿@page
+@model LibararyWebApplication.Pages.LoginModel
+@{
+}
+
+<div>
+	<label>username</label>
+	<input id="username" type="text" />
+	<label>password</label>
+	<input id="password" type="password" />
+	<button id="login_button">submit</button>
+</div>
+
+
+<script>
+	document.querySelector("#login_button").addEventListener("click", function () {
+		const username = document.getElementById("username").value;
+		const password = document.getElementById("password").value;
+
+		fetch("/api/getaccesstoken", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({ username, password })
+		})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error("Request failed");
+			}
+
+			// local storage/ cookies
+			return response.json();
+			// let token_obj = response.json();
+			// console.log(token_obj);
+			// localStorage.setItem("token", token_obj["access_token"]);
+			
+		})
+		.then(data => {
+			console.log("Access token received:", data);
+			// You can store or use the access token here
+			// let token_obj = JSON.parse(data);
+			let token_obj = data;
+			console.log(token_obj);
+			localStorage.setItem("token", token_obj["access_token"]);
+		})
+		.catch(error => {
+			console.error("Error:", error);
+		});
+	});
+</script>
