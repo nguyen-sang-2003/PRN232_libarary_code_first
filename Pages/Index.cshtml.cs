@@ -16,10 +16,17 @@ namespace LibararyWebApplication.Pages
             return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
         }
 
+        public string token_cookie { get; set; }
+
         public string current_host { get; set; }
 
         public void OnGet()
         {
+            string tmp_str;
+            if (HttpContext.Request.Cookies.TryGetValue("token", out tmp_str))
+            {
+                token_cookie = tmp_str;
+            }
             // server
             current_host = HttpContext.Request.Host.ToString();
 
@@ -35,8 +42,12 @@ namespace LibararyWebApplication.Pages
                 //string api_endpoint = "http://localhost:5138/";
                 // blazor
                 string api_endpoint = "http://googleapi.chatgpt/";
+                //api_endpoint = H
+                // blazor
+                // razor
+                api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
                 // page 
-                var task1 = httpClient.GetAsync($"{api_endpoint}api/SampleEnityBooks");
+                var task1 = httpClient.GetAsync($"{api_endpoint}/api/SampleEnityBooks");
                 // server
                 // set model obj render html
 

@@ -140,7 +140,17 @@ namespace LibararyWebApplication.Controllers
                     JObject retval = new JObject();
                     retval["access_token"] = new JwtSecurityTokenHandler().WriteToken(token);
 
-
+                    // cookie
+                    // page login js send request -> set localstorage / set cookie
+                    // page login 2 -> document.cookies.set('token', ...)
+                    // localstorage -> .cs khong biet token
+                    // cookies -> cs lay duoc token
+                    // blazor client side / server side
+                    // client side -> localstroage
+                    // server side -> dung cookie
+                    // 
+                    // js -> ajax -> token -> localstorage/cookie
+                    // 
                     return Ok(JsonConvert.SerializeObject(retval));
                 }
             }

@@ -42,7 +42,9 @@
 			// let token_obj = JSON.parse(data);
 			let token_obj = data;
 			console.log(token_obj);
-			localStorage.setItem("token", token_obj["access_token"]);
+			let token_str = token_obj["access_token"];
+			localStorage.setItem("token", token_str );
+			document.cookie = `token=${token_str}`;
 		})
 		.catch(error => {
 			console.error("Error:", error);
