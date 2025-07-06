@@ -66,6 +66,7 @@ public class BookCopy
     // rental
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public virtual Book Book { get; set; }
 }
 
 public class Rental
