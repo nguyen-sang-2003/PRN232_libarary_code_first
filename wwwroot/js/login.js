@@ -17,6 +17,12 @@ function invalidate_token() {
     console.log("Token invalidated");
 }
 
+function set_token(token) {
+    localStorage.setItem("token", token);
+    // Set the token in cookies as well
+    document.cookie = `token=${token}; path=/;`;
+    console.log("Token set:", token);
+}
 
 function on_login_button_click() {
     // TODO show loading state
@@ -32,7 +38,23 @@ function on_login_button_click() {
         return res.json();
     })
     .then(data => {
-        localStorage.setItem("token", data.access_token);
+        if (!data || !data.token) {
+            console.error("Invalid response data:", data);
+            alert("Invalid response from server");
+            throw new Error("Invalid response from server");
+        }
+
+        console.log("Login successful, token received:", data.token);
+        set_token(data.token);
+        // check for return_url in request path
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get('return_url');
+        if (returnUrl) {
+            // Redirect to the return URL if it exists
+            window.location.href = returnUrl;
+            return;
+        }
+        // If no return URL, redirect to home page
         // Redirect after login
         window.location.href = "/";
     })
