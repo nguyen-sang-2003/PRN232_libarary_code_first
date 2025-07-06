@@ -46,7 +46,7 @@ namespace LibararyWebApplication.Pages
                 // blazor
                 // razor
                 api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
-                // page 
+                // page
                 var task1 = httpClient.GetAsync($"{api_endpoint}/api/SampleEnityBooks");
                 // server
                 // set model obj render html

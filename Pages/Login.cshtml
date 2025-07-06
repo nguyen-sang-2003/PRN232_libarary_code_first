@@ -1,53 +1,75 @@
-﻿@page
+@page
 @model LibararyWebApplication.Pages.LoginModel
 @{
 }
 
-<div>
-	<label>username</label>
-	<input id="username" type="text" />
-	<label>password</label>
-	<input id="password" type="password" />
-	<button id="login_button">submit</button>
+<h2>Login</h2>
+<div id="user-info" style="display:none;">
+    <h3>Already logged in as:</h3>
+    <div id="user-details"></div>
+    <button id="logout-btn">Logout</button>
 </div>
-
+<form id="login-form">
+    <!-- Your login form fields here -->
+    <input type="text" id="username" name="username" placeholder="Username" required />
+    <input type="password" id="password" name="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+</form>
 
 <script>
-	document.querySelector("#login_button").addEventListener("click", function () {
-		const username = document.getElementById("username").value;
-		const password = document.getElementById("password").value;
+document.addEventListener("DOMContentLoaded", function() {
+    const token = localStorage.getItem("token");
+    if (token) {
+        // Fetch user info using token
+        fetch("/api/UserInfo", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Invalid token");
+            return res.json();
+        })
+        .then(user => {
+            document.getElementById("user-info").style.display = "block";
+            document.getElementById("user-details").innerText = JSON.stringify(user, null, 2);
+            document.getElementById("login-form").style.display = "none";
+        })
+        .catch(() => {
+            // Token invalid, show login form
+            localStorage.removeItem("token");
+            document.getElementById("user-info").style.display = "none";
+            document.getElementById("login-form").style.display = "block";
+        });
+    }
+    document.getElementById("logout-btn").onclick = function() {
+        localStorage.removeItem("token");
+        location.reload();
+    };
 
-		fetch("/api/getaccesstoken", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({ username, password })
-		})
-		.then(response => {
-			if (!response.ok) {
-				throw new Error("Request failed");
-			}
+    document.getElementById("login-form").onsubmit = function(e) {
+        e.preventDefault();
 
-			// local storage/ cookies
-			return response.json();
-			// let token_obj = response.json();
-			// console.log(token_obj);
-			// localStorage.setItem("token", token_obj["access_token"]);
-			
-		})
-		.then(data => {
-			console.log("Access token received:", data);
-			// You can store or use the access token here
-			// let token_obj = JSON.parse(data);
-			let token_obj = data;
-			console.log(token_obj);
-			let token_str = token_obj["access_token"];
-			localStorage.setItem("token", token_str );
-			document.cookie = `token=${token_str}`;
-		})
-		.catch(error => {
-			console.error("Error:", error);
-		});
-	});
+		// show loading state
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        fetch("/api/getaccesstoken", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Login failed");
+            return res.json();
+        })
+        .then(data => {
+            localStorage.setItem("token", data.access_token);
+            // Redirect after login
+            window.location.href = "/";
+        })
+        .catch(err => {
+            alert("Login failed");
+        });
+    };
+});
 </script>

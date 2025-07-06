@@ -1,4 +1,4 @@
-﻿using System.Configuration;
+using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -148,9 +148,9 @@ namespace LibararyWebApplication.Controllers
                     // blazor client side / server side
                     // client side -> localstroage
                     // server side -> dung cookie
-                    // 
+                    //
                     // js -> ajax -> token -> localstorage/cookie
-                    // 
+                    //
                     return Ok(JsonConvert.SerializeObject(retval));
                 }
             }

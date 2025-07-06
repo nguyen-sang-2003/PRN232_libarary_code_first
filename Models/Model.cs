@@ -63,7 +63,7 @@ public class BookCopy
     // dang muon, unavailable, available
     public string Status { get; set; } // "available"
     public string Condition { get; set; } // "new", "old", "mid"
-    // rental 
+    // rental
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

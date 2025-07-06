@@ -13,9 +13,18 @@
 }
 ```
 
+## for windows
+
 ```
 dotnet ef migrations add InitialCreate
 dotnet ef database update
+```
+
+## for ubuntu
+
+```
+dotnet tool run dotnet-ef migrations add InitialCreate
+dotnet tool run dotnet-ef database update
 ```
 
 # access token
