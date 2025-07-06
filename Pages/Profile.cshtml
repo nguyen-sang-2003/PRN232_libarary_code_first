@@ -1,0 +1,70 @@
+﻿@page
+@model LibararyWebApplication.Pages.ProfileModel
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h1>Thông tin người dùng</h1>
+
+@if (Model.User != null)
+{
+    <p>Tải thông tin thành công : @Model.User.Id </p>
+    <p>@Model.existing_token</p>
+
+}
+else
+{
+    <p>Đang tải thông tin...</p>
+}
+
+@* <div class="container my-5 d-flex justify-content-center">
+        <div class="card shadow-sm" style="max-width: 700px; width: 100%;">
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.User.Image))
+                {
+                    <div class="row mb-4 justify-content-center">
+                        <div class="col-auto">
+                            <img src="@Model.User.Image" alt="Ảnh người dùng" class="img-thumbnail" style="max-height: 150px; object-fit: cover;" />
+                        </div>
+                    </div>
+                }
+                <div class="row mb-3">
+                    <label class="col-sm-4 fw-semibold text-end">Code:</label>
+                    <div class="col-sm-8">@Model.User.Code</div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 fw-semibold text-end">Họ tên:</label>
+                    <div class="col-sm-8">@Model.User.FullName</div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 fw-semibold text-end">Email:</label>
+                    <div class="col-sm-8">@Model.User.Email</div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 fw-semibold text-end">SĐT:</label>
+                    <div class="col-sm-8">@Model.User.PhoneNumber</div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 fw-semibold text-end">Ngày tạo:</label>
+                    <div class="col-sm-8">@Model.User.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 fw-semibold text-end">Ngày cập nhật:</label>
+                    <div class="col-sm-8">@Model.User.UpdatedAt?.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-4 fw-semibold text-end">Trạng thái:</label>
+                    <div class="col-sm-8">
+                        @if (Model.User.IsActive == true)
+                        {
+                            <span class="badge bg-success">Đang hoạt động</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Không hoạt động</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> *@
