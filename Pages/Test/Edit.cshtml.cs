@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,7 +42,7 @@ namespace LibararyWebApplication.Pages.Test
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-          
+
 
             _context.Attach(Book).State = EntityState.Modified;
 

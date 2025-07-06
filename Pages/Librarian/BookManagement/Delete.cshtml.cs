@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +25,7 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
             if (id == null)
             {
                 return NotFound();
-            }  
+            }
             HttpClient client = new HttpClient();
             string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
           var book = await client.GetFromJsonAsync<Book>($"{api_endpoint}/api/Books/{id}");
