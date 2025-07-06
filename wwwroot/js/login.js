@@ -38,14 +38,14 @@ function on_login_button_click() {
         return res.json();
     })
     .then(data => {
-        if (!data || !data.token) {
+        if (!data || !data.access_token) {
             console.error("Invalid response data:", data);
             alert("Invalid response from server");
             throw new Error("Invalid response from server");
         }
 
-        console.log("Login successful, token received:", data.token);
-        set_token(data.token);
+        console.log("Login successful, token received:", data.access_token);
+        set_token(data.access_token);
         // check for return_url in request path
         const urlParams = new URLSearchParams(window.location.search);
         const returnUrl = urlParams.get('return_url');
@@ -126,6 +126,9 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("user-info").style.display = "none";
             document.getElementById("login-form").style.display = "block";
         });
+    }
+    else {
+        window.location.href = "/login?return_url=" + encodeURIComponent(window.location.pathname + window.location.search);
     }
     document.getElementById("logout-btn").onclick = function() {
         localStorage.removeItem("token");
