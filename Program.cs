@@ -1,3 +1,4 @@
+using LibararyWebApplication.Components;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -32,6 +33,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddSingleton<TokenService>();
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
 
 
 builder.Services.AddControllers();
@@ -53,5 +57,9 @@ app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
+
+app.UseAntiforgery();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 
 app.Run();
