@@ -1,4 +1,4 @@
-﻿namespace LibararyWebApplication.DTO
+namespace LibararyWebApplication.DTO
 {
     public class DetailRentail
     {
