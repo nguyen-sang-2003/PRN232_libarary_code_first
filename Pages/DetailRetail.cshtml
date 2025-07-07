@@ -35,6 +35,12 @@
 
                     <dt class="col-sm-3">📌 Status:</dt>
                     <dd class="col-sm-9">@Model.Detail.Status</dd>
+
+                    <dt class="col-sm-3">📌 Số lần gia hạn:</dt>
+                    <dd class="col-sm-9">@Model.Detail.RenewCount</dd>
+
+                    <dt class="col-sm-3">📆 Ngày phải trả:</dt>
+                    <dd class="col-sm-9">@Model.Detail.DueDate.AddDays(3 * Model.Detail.RenewCount).ToString("dd/MM/yyyy")</dd>
                 </dl>
             }
             else
@@ -42,16 +48,15 @@
                 <div class="alert alert-danger">Không tìm thấy đơn mượn.</div>
             }
         </div>
-        <div class="card-footer mt-4 d-flex gap-3">
-            <form method="post" asp-page-handler="Return" onsubmit="return confirm('Xác nhận trả sách?')">
-                <input type="hidden" name="RentalId" value="@Model.Detail.RentalId" />
-                <button type="submit" class="btn btn-success">📥 Return Book</button>
-            </form>
+        @if (Model.Detail != null)
+        {
+            <div class="card-footer mt-4 d-flex gap-3">
+                <form method="post" asp-page-handler="Renew" onsubmit="return confirm('Xác nhận gia hạn sách?')">
+                    <input type="hidden" name="RentalId" value="@Model.Detail.RentalId" />
+                    <button type="submit" class="btn btn-warning">🔁 Renew Book</button>
+                </form>
+            </div>
+        }
 
-            <form method="post" asp-page-handler="Renew" onsubmit="return confirm('Xác nhận gia hạn sách?')">
-                <input type="hidden" name="RentalId" value="@Model.Detail.RentalId" />
-                <button type="submit" class="btn btn-warning">🔁 Renew Book</button>
-            </form>
-        </div>
     </div>
 </div>

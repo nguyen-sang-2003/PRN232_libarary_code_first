@@ -7,7 +7,7 @@ namespace LibararyWebApplication.DTO
         public int BookCopyId { get; set; }
         public string Title { get; set; }
         public string ImageBase64 { get; set; }
-
+        public int RenewCount { get; set; }
         public DateTime RentailDate { get; set; }
         public DateTime DueDate { get; set; }
         public string BookCondition { get; set; }
