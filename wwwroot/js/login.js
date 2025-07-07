@@ -127,9 +127,7 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("login-form").style.display = "block";
         });
     }
-    else {
-        window.location.href = "/login?return_url=" + encodeURIComponent(window.location.pathname + window.location.search);
-    }
+
     document.getElementById("logout-btn").onclick = function() {
         localStorage.removeItem("token");
         location.reload();
