@@ -1,15 +1,14 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using LibararyWebApplication.Migrations;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
-
-
-
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Reflection.Emit;
 using System.Security.Cryptography.X509Certificates;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 public class Author
 {
@@ -78,6 +77,7 @@ public class Rental
     [ForeignKey("BookCopy")]
     public int BookCopyId { get; set; }
     public string Status { get; set; }
+    public int RenewCount { get; set; } // count number renew book
     public DateTime RentalDate { get; set; }
     public DateTime DueDate { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -110,6 +110,15 @@ public class User
     public string Role { get; set; }
     // edit website/admin
 }
+public class Rule
+{
+    [Key]
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
+    public DateTime CreatedAt { get; set; } 
+    public DateTime UpdatedAt { get; set; }
+}
 
 public class PrnContext : DbContext
 {
@@ -139,7 +148,7 @@ public class PrnContext : DbContext
     public DbSet<Rental> Rentals { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Return> Returns { get; set; }
-
+    public DbSet<Rule> Rules { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -173,12 +182,15 @@ public class PrnContext : DbContext
             new User { Id = 1, Username = "admin", Password = "admin123", Active = true, Role = "admin" },
             new User { Id = 2, Username = "john_doe", Password = "password", Active = true, Role = "user" },
             new User { Id = 3, Username = "librarian", Password = "librarypass", Active = true, Role = "staff" }
-        );
+        ); 
 
         modelBuilder.Entity<BookCategory>().HasData(
             new BookCategory { BookId = 1, CategoryId = 2 }, // 1984 - Dystopian
             new BookCategory { BookId = 2, CategoryId = 3 }, // To Kill a Mockingbird - Drama
             new BookCategory { BookId = 3, CategoryId = 1 }  // Gatsby - Classic
+        );
+        modelBuilder.Entity<Rule>().HasData(
+            new Rule { Id = 1, Title = "rule 1", Content = "none", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
         );
     }
 }

@@ -19,7 +19,7 @@ namespace LibararyWebApplication.Pages
         [BindProperty(SupportsGet = true)]
         [FromQuery(Name = "Page")]
         public int? Page { get; set; }
-        public int PageSize { get; set; } = 2;
+        public int PageSize { get; set; } = 10;
         public int TotalPages { get; set; }
         public int CurrentPage;
 
@@ -64,7 +64,7 @@ namespace LibararyWebApplication.Pages
             {
                 return Page();
             }
-            return RedirectToPage("UserAdmin", new { SearchTerm, RoleFilter, Page = CurrentPage });
+            return RedirectToPage("UserAdmin");
         }
 
         public async Task<IActionResult> OnPostChangeRoleAsync(int id, string newRole)
@@ -76,7 +76,7 @@ namespace LibararyWebApplication.Pages
             {
                 return Page();
             }
-            return RedirectToPage("UserAdmin", new { SearchTerm, RoleFilter, Page = CurrentPage });
+            return RedirectToPage("UserAdmin");
         }
     }
 }

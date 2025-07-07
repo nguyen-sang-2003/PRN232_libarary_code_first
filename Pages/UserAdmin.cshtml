@@ -49,43 +49,59 @@
                         <tbody>
                             @foreach (var user in Model.Users)
                             {
-                                <tr class="text-center">
-                                    <td>@user.Id</td>
-                                    <td class="text-start">@user.Username</td>
-                                    <td>
-                                        <form method="post" asp-page-handler="ChangeRole" class="d-flex justify-content-center gap-2">
-                                            <input type="hidden" name="id" value="@user.Id" />
-                                            <select name="newRole" class="form-select form-select-sm w-auto">
-                                                <option value="user" selected="@("user" == user.Role)">User</option>
-                                                <option value="staff" selected="@("staff" == user.Role)">Staff</option>
-                                                <option value="admin" selected="@("admin" == user.Role)">Admin</option>
-                                            </select>
-                                            <button type="submit" class="btn btn-sm btn-outline-primary">✔</button>
-                                        </form>
-                                    </td>
-                                    <td>
-                                        @if (user.Active)
-                                        {
-                                            <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Xác nhận xóa người dùng?')">
-                                                <input type="hidden" name="Id" value="@user.Id" />
-                                                <button type="submit" class="badge bg-success">
-                                                    <span>Hoạt động</span>
-                                                </button>
+                                @if(user.Role == "admin")
+                                {
+                                    <tr class="text-center">
+                                        <td>@user.Id</td>
+                                        <td class="text-start">@user.Username</td>
+                                        <td>
+                                            <span class="badge bg-primary">Admin</span>
+                                        </td>
+                                        <td>
+                                            @if (user.Active)
+                                            {
+                                                <span class="badge bg-success">Hoạt động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Đã khóa</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr class="text-center">
+                                        <td>@user.Id</td>
+                                        <td class="text-start">@user.Username</td>
+                                        <td>
+                                            <form method="post" asp-page-handler="ChangeRole" class="d-flex justify-content-center gap-2">
+                                                <input type="hidden" name="id" value="@user.Id" />
+                                                <select name="newRole" class="form-select form-select-sm w-auto">
+                                                    <option value="user" selected="@("user" == user.Role)">User</option>
+                                                    <option value="staff" selected="@("staff" == user.Role)">Staff</option>
+                                                </select>
+                                                <button type="submit" class="btn btn-sm btn-outline-primary">✔</button>
                                             </form>
-                                            @* <span class="badge bg-success">Hoạt động</span> *@
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary">Đã khóa</span>
-                                        }
-                                    </td>
-                                    @* <td>
-                                        <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Xác nhận xóa người dùng?')">
-                                            <input type="hidden" name="Id" value="@user.Id" />
-                                            <button type="submit" class="btn btn-sm btn-danger">🗑 Xóa</button>
-                                        </form>
-                                    </td> *@
-                                </tr>
+                                        </td>
+                                        <td>
+                                            @if (user.Active)
+                                            {
+                                                <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Xác nhận khóa người dùng?')">
+                                                    <input type="hidden" name="Id" value="@user.Id" />
+                                                    <button type="submit" class="badge bg-success">
+                                                        <span>Hoạt động</span>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Đã khóa</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                
                             }
                         </tbody>
                     </table>

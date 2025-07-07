@@ -15,7 +15,7 @@ namespace LibararyWebApplication.Controllers
         {
             _context = context;
         }
-        [HttpGet("rentailId")]
+        [HttpGet("rental-detail")]
         public async Task<ActionResult<DetailRentail>> Get(int rentailId)
         {
             var result = await _context.Returns
@@ -31,6 +31,7 @@ namespace LibararyWebApplication.Controllers
                 BookCopyId = result.Rental.BookCopyId,
                 Title = result.Rental.Book.Book.Title,
                 ImageBase64 = result.Rental.Book.Book.ImageBase64,
+                RenewCount = result.Rental.RenewCount,
                 RentailDate = result.Rental.RentalDate,
                 DueDate = result.Rental.DueDate,
                 BookCondition = result.Rental.Book.Condition,

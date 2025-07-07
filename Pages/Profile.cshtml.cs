@@ -7,7 +7,7 @@ using System.Net.Http;
 namespace LibararyWebApplication.Pages
 {
     public class ProfileModel : PageModel
-    { 
+    {
         public User? User { get; set; }
         public string existing_token { get; set; }
         public async Task OnGetAsync()
@@ -19,14 +19,17 @@ namespace LibararyWebApplication.Pages
 
                 string current_host = HttpContext.Request.Host.ToString();
 
-                 existing_token = Request.Headers.Authorization;
+                existing_token = Request.Headers.Authorization;
+                if (existing_token == null)
+                {
+                    existing_token = Request.Cookies["token"];
+                }
                 if (existing_token == null)
                 {
                     Redirect($"http://{current_host}/login");
                 }
 
                 int testUserId = 1;
-
                 var response = await httpClient.GetAsync($"{api_endpoint}/api/Users/{testUserId}");
 
                 if (response.IsSuccessStatusCode)
