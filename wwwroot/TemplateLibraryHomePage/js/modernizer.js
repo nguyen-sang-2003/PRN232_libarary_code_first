@@ -1,4 +1,3 @@
-
 /*!
  * Modernizr v2.7.2
  * www.modernizr.com
@@ -4544,7 +4543,3 @@ hooks.HTML5_FMT = {
 return hooks;
 
 })));
-
-
-
-
