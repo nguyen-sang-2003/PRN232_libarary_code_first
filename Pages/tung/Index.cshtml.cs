@@ -1,8 +1,6 @@
-using Azure;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 
 namespace LibararyWebApplication.Pages

@@ -99,6 +99,9 @@ public class User
     public int Id { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
+    public string Email { get; set; }
+    public string? PasswordResetToken { get; set; } // for password reset
+    public long? PasswordResetTokenExpiryUnixTS { get; set; }
     public bool Active { get; set; }
     public string Role { get; set; }
     // edit website/admin
@@ -172,9 +175,9 @@ public class PrnContext : DbContext
         );
 
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, Username = "admin", Password = "admin123", Active = true, Role = "admin" },
-            new User { Id = 2, Username = "john_doe", Password = "password", Active = true, Role = "user" },
-            new User { Id = 3, Username = "librarian", Password = "librarypass", Active = true, Role = "staff" }
+            new User { Id = 1, Username = "admin", Password = "admin123", Active = true, Role = "admin", Email = "admin@example.com"},
+            new User { Id = 2, Username = "john_doe", Password = "password", Active = true, Role = "user", Email = "john_doe@example.com"},
+            new User { Id = 3, Username = "librarian", Password = "librarypass", Active = true, Role = "staff", Email = "staff1@example.com" }
         );
 
         modelBuilder.Entity<BookCategory>().HasData(
