@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibararyWebApplication.Controllers.Cuong
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    // [Route("api/[controller]")]
+    // [ApiController]
     public class CategoriesController : ControllerBase
     {
         private readonly PrnContext _context;
@@ -15,19 +15,19 @@ namespace LibararyWebApplication.Controllers.Cuong
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories()
-        {
-            var categories = await _context.Categories
-                .Select(c => new CategoryDto
-                {
-                    Id = c.Id,
-                    Name = c.Name
-                })
-                .ToListAsync();
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories()
+        // {
+        //     var categories = await _context.Categories
+        //         .Select(c => new CategoryDto
+        //         {
+        //             Id = c.Id,
+        //             Name = c.Name
+        //         })
+        //         .ToListAsync();
 
-            return Ok(categories);
-        }
+        //     return Ok(categories);
+        // }
 
         // [HttpGet("{id}/books")]
         // public async Task<ActionResult<IEnumerable<BookDto>>> GetBooksByCategory(int id)
