@@ -17,9 +17,13 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
             _context = context;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Id");
+            HttpClient client = new HttpClient();
+            string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}"; // đổi theo địa chỉ backend bạn chạy
+            var category =  await client.GetFromJsonAsync<List<Category>>($"{api_endpoint}/api/Categories");
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Name");
+            ViewData["Categories"] = new SelectList(category, "Id", "Name");
             return Page();
         }
 

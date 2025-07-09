@@ -21,10 +21,27 @@ namespace LibararyWebApplication.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<BookViewDTO>>> GetBooks()
         {
-            return await _context.Books.Include(s => s.Author).Include(s => s.BookCopies).ToListAsync();
+            var books = await _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.BookCopies)
+                .Select(b => new BookViewDTO
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    PublishedDate = b.PublishedDate,
+                    ImageBase64 = b.ImageBase64,
+                    AuthorId = b.AuthorId,
+                    AuthorName = b.Author.Name,
+                    TotalCopies = b.BookCopies.Count
+                })
+                .ToListAsync();
+
+            return books;
         }
+
 
         // GET: api/Books/5
         [HttpGet("{id}")]
@@ -81,21 +98,27 @@ namespace LibararyWebApplication.Controllers
         // POST: api/Books
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(BookDTO book)
+        public async Task<IActionResult> CreateBook([FromBody] BookDTO dto)
         {
-            var book1 = new Book
+            var book = new Book
             {
-               Title = book.Name,
-               AuthorId = book.AuthorId,
-               ImageBase64 = book.Image,
-               PublishedDate = book.PublicDate
+                Title = dto.Name,
+                AuthorId = dto.AuthorId,
+                ImageBase64 = dto.Image,
+                PublishedDate = dto.PublicDate,
             };
 
-            _context.Books.Add(book1);
+            _context.Books.Add(book);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book1.Id }, book);
+            // Thêm dữ liệu vào bảng BookCategory
+
+
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
         }
+
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
@@ -123,6 +146,20 @@ public class BookDTO
 {
     public string Name { get; set; }
     public int AuthorId { get; set; }
-    public string Image {  get; set; }
+    public string Image { get; set; }
     public DateTime PublicDate { get; set; }
+    public List<int> CategoryIds { get; set; } = new();
+
+}
+public class BookViewDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public DateTime PublishedDate { get; set; }
+    public string ImageBase64 { get; set; }
+
+    public int AuthorId { get; set; }
+    public string AuthorName { get; set; }
+
+    public int TotalCopies { get; set; }
 }

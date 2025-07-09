@@ -43,6 +43,8 @@ public class Book
     // image 2-4mb bytes => string/base64 png
     public DateTime PublishedDate { get; set; }
     public virtual List<BookCopy> BookCopies { get; set; }
+
+    public virtual List<Category> Categories { get; set; } = [];
     public virtual Author Author { get; set; }
 }
 
@@ -175,8 +177,8 @@ public class PrnContext : DbContext
         );
 
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, Username = "admin", Password = "admin123", Active = true, Role = "admin", Email = "admin@example.com"},
-            new User { Id = 2, Username = "john_doe", Password = "password", Active = true, Role = "user", Email = "john_doe@example.com"},
+            new User { Id = 1, Username = "admin", Password = "admin123", Active = true, Role = "admin", Email = "admin@example.com" },
+            new User { Id = 2, Username = "john_doe", Password = "password", Active = true, Role = "user", Email = "john_doe@example.com" },
             new User { Id = 3, Username = "librarian", Password = "librarypass", Active = true, Role = "staff", Email = "staff1@example.com" }
         );
 
@@ -187,6 +189,14 @@ public class PrnContext : DbContext
         );
         modelBuilder.Entity<Rule>().HasData(
             new Rule { Id = 1, Title = "rule 1", Content = "none", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+        );
+
+        modelBuilder.Entity<Rental>().HasData(
+            new Rental { Id = 1, UserId = 2, BookCopyId = 1, Status = "borrowed", RenewCount = 1, RentalDate = DateTime.Now, DueDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+        );
+
+        modelBuilder.Entity<Return>().HasData(
+            new Return { Id = 1, RentalId = 1, Condition = "100%", ReturnDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
         );
     }
 }

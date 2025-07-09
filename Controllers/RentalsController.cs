@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LibararyWebApplication.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,18 +19,99 @@ namespace LibararyWebApplication.Controllers
         {
             _context = context;
         }
-        [HttpPost("renew-book")]
-        public async Task<ActionResult> UpdateRenewBook(int rentalId)
+
+        // GET: api/Rentals
+        [HttpGet]
+        public async Task<ActionResult<List<RentalDTO>>> GetRentals()
         {
-            var result = await _context.Rentals.FirstOrDefaultAsync(rt=> rt.Id == rentalId);
-            if (result == null) return NotFound();
+            var rental = await _context.Rentals.Include(s => s.User).Include(s => s.Book).Select(s => new RentalDTO
+            {
+                Id = s.Id,
+                Status = s.Status,
+                RentalDate = s.RentalDate,
+                DueDate = s.DueDate,
+                CreatedAt = s.CreatedAt,
+                BookCopyId = s.BookCopyId,
+                UpdatedAt = s.UpdatedAt,
+                UserName = s.User.Username,
+               BookName = s.Book.Book.Title,
+            }).ToListAsync();
+            return Ok(rental);
+        }
 
-            result.RenewCount = result.RenewCount == null ? 1 : result.RenewCount + 1;
+        // GET: api/Rentals/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Rental>> GetRental(int id)
+        {
+            var rental = await _context.Rentals.Include(s => s.User).Include(s => s.Book).FirstOrDefaultAsync(s => s.Id == id);
 
-            _context.Entry(result).Property(u => u.RenewCount).IsModified = true;
+            if (rental == null)
+            {
+                return NotFound();
+            }
+
+            return rental;
+        }
+
+        // PUT: api/Rentals/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutRental(int id, String Status)
+        {
+            var rental = _context.Rentals.FirstOrDefault(s => s.Id == id);
+            rental.Status = Status;
+
+            _context.Entry(rental).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!RentalExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Rentals
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Rental>> PostRental(Rental rental)
+        {
+            _context.Rentals.Add(rental);
             await _context.SaveChangesAsync();
 
-            return Ok(result);
+            return CreatedAtAction("GetRental", new { id = rental.Id }, rental);
+        }
+
+        // DELETE: api/Rentals/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRental(int id)
+        {
+            var rental = await _context.Rentals.FindAsync(id);
+            if (rental == null)
+            {
+                return NotFound();
+            }
+
+            _context.Rentals.Remove(rental);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool RentalExists(int id)
+        {
+            return _context.Rentals.Any(e => e.Id == id);
         }
     }
 }

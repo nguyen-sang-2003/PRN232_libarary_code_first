@@ -11,13 +11,13 @@ namespace LibararyWebApplication.Pages
         public int rentailId { get; set; }
 
         public DetailRentail? Detail { get; set; }
-        private string ApiBase => $"http://{HttpContext.Request.Host}/api";
+        private string ApiBase => $"http://{HttpContext.Request.Host}";
         public async Task OnGetAsync()
         {
             try
             {
                 using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync($"{ApiBase}/Returns/rental-detail?rentailId={rentailId}");
+                var response = await httpClient.GetAsync($"{ApiBase}/api/Returns/rental-detail?rentailId={rentailId}");
                 if (!response.IsSuccessStatusCode) return;
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -46,7 +46,9 @@ namespace LibararyWebApplication.Pages
         public async Task<IActionResult> OnPostRenewAsync(int RentalId)
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.PostAsync($"{ApiBase}/Rentals/renew-book?rentalId={RentalId}", null);
+            string api_url = $"{ApiBase}/api/users/rental/renew-book?rentalId={RentalId}";
+            Console.WriteLine(api_url);
+            var response = await httpClient.PostAsync(api_url, null);
 
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
