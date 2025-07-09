@@ -191,12 +191,41 @@ public class PrnContext : DbContext
             new Rule { Id = 1, Title = "rule 1", Content = "none", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
         );
 
-        modelBuilder.Entity<Rental>().HasData(
-            new Rental { Id = 1, UserId = 2, BookCopyId = 1, Status = "borrowed", RenewCount = 1, RentalDate = DateTime.Now, DueDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
-        );
 
         modelBuilder.Entity<Return>().HasData(
             new Return { Id = 1, RentalId = 1, Condition = "100%", ReturnDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
         );
+
+        modelBuilder.Entity<Rental>().HasData(
+            new Rental
+            {
+                Id = 1,
+                UserId = 2, // john_doe
+                BookCopyId = 1, // BookId = 1, "1984"
+                Status = RentalStatus.Approved,
+                RentalDate = new DateTime(2025, 7, 1),
+                DueDate = new DateTime(2025, 7, 15),
+                CreatedAt = new DateTime(2025, 7, 1),
+                UpdatedAt = new DateTime(2025, 7, 1)
+            },
+            new Rental
+            {
+                Id = 2,
+                UserId = 2,
+                BookCopyId = 2,
+                Status = RentalStatus.Returned,
+                RentalDate = new DateTime(2025, 6, 10),
+                DueDate = new DateTime(2025, 6, 24),
+                CreatedAt = new DateTime(2025, 6, 10),
+                UpdatedAt = new DateTime(2025, 6, 24)
+            }
+        );
+    }
+
+    public static class RentalStatus
+    {
+        public const string Pending = "Pending";
+        public const string Approved = "Approved";
+        public const string Returned = "Returned";
     }
 }
