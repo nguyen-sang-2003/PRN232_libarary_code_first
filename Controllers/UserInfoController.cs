@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Microsoft.EntityFrameworkCore;
 using PRNLibrary.Services;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Claims;
 
 namespace LibararyWebApplication.Controllers
 {
@@ -18,6 +15,157 @@ namespace LibararyWebApplication.Controllers
         {
             this.emailService = emailService;
             ctx = context;
+        }
+
+        public class SampleBookWC_Category
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
+
+        public class SampleBookWC
+        {
+            public int Id { get; set; }
+            public string Title { get; set; }
+            public int AuthorId { get; set; }
+            public string ImageBase64 { get; set; }
+            public DateTime PublishedDate { get; set; }
+            public virtual ICollection<SampleBookWC_Category> Categories { get; set; }
+
+        }
+
+        [HttpGet("/api/tung/books/add1c/{id}")]
+        public IActionResult sample_books_add_cat([FromRoute] int id)
+        {
+            var l1 = ctx.Books.Include(b => b.Categories).Where(b => b.Id == id).FirstOrDefault();
+            if (l1 == null)
+            {
+                return NotFound();
+            }
+
+            if (l1.Categories.Count == 0)
+            {
+                return NotFound();
+            }
+
+            var tmp_cat_id_list = l1.Categories.Select(c => c.Id).ToList();
+
+            var cat_list = ctx.Categories.ToList();
+            var free_cat_list = cat_list.Where(c => !tmp_cat_id_list.Contains(c.Id)).ToList();
+
+            if (free_cat_list.Count == 0)
+            {
+                return NotFound();
+            }
+
+            l1.Categories.Add(free_cat_list.First());
+            ctx.Books.Update(l1);
+            ctx.SaveChanges();
+
+            var book = l1;
+
+            var c_list = book.Categories.Select(c => new SampleBookWC_Category()
+            {
+                Id = c.Id,
+                Name = c.Name
+            }).ToList();
+            var b1 = new SampleBookWC()
+            {
+                Id = book.Id,
+                Title = book.Title,
+                AuthorId = book.AuthorId,
+                ImageBase64 = book.ImageBase64,
+                PublishedDate = book.PublishedDate,
+                Categories = c_list
+            };
+            return Ok(b1);
+        }
+
+
+
+        [HttpGet("/api/tung/books/delete1c/{id}")]
+        public IActionResult sample_books_del_cat([FromRoute] int id)
+        {
+            var l1 = ctx.Books.Include(b => b.Categories).Where(b => b.Id == id).FirstOrDefault();
+            if (l1 == null)
+            {
+                return NotFound();
+            }
+
+            if (l1.Categories.Count == 0)
+            {
+                return NotFound();
+            }
+
+            l1.Categories.Remove(l1.Categories.First());
+            ctx.Books.Update(l1);
+            ctx.SaveChanges();
+
+            var book = l1;
+
+            var c_list = book.Categories.Select(c => new SampleBookWC_Category()
+            {
+                Id = c.Id,
+                Name = c.Name
+            }).ToList();
+            var b1 = new SampleBookWC()
+            {
+                Id = book.Id,
+                Title = book.Title,
+                AuthorId = book.AuthorId,
+                ImageBase64 = book.ImageBase64,
+                PublishedDate = book.PublishedDate,
+                Categories = c_list
+            };
+            return Ok(b1);
+        }
+
+
+        [HttpGet("/api/tung/books")]
+        public IActionResult sample_books()
+        {
+            var l1 = ctx.Books.Include(b => b.Categories).ToList();
+            var l2 = ctx.Categories.Include(c => c.Books).ToList();
+
+            var ui_book_list = l1.Select(book =>
+            {
+                var c_list = book.Categories.Select(c => new SampleBookWC_Category()
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                }).ToList();
+                var b1 = new SampleBookWC()
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    AuthorId = book.AuthorId,
+                    ImageBase64 = book.ImageBase64,
+                    PublishedDate = book.PublishedDate,
+                    Categories = c_list
+                };
+
+                return b1;
+            });
+
+            var ui_cat_list = l2.Select(c => new
+            {
+                id = c.Id,
+                name = c.Name,
+                books = c.Books.Select(b => new
+                {
+                    id = b.Id,
+                    Title = b.Title,
+                    AuthorId = b.AuthorId,
+                    ImageBase64 = b.ImageBase64,
+                    PublishedDate = b.PublishedDate
+                }).ToList()
+            });
+
+            return Ok(new
+            {
+                books = ui_book_list,
+                categories = ui_cat_list
+            });
         }
 
         [HttpGet("/api/users/info")]

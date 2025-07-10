@@ -17,18 +17,7 @@ public class Category
     [Key]
     public int Id { get; set; }
     public string Name { get; set; }
-    public virtual List<Book> Books { get; set; } = [];
-
-}
-
-public class BookCategory
-{
-    [ForeignKey("Book")]
-    public int BookId { get; set; }
-    [ForeignKey("Category")]
-    public int CategoryId { get; set; }
-    public virtual Book Book { get; set; } = null;
-    public virtual Category Category { get; set; } = null;
+    public virtual ICollection<Book> Books { get; set; }
 }
 
 public class Book
@@ -38,14 +27,11 @@ public class Book
     public string Title { get; set; }
     [ForeignKey("Author")]
     public int AuthorId { get; set; }
-    public string ImageBase64 { get; set; } // in database
-    //public string ImageUrl { get; set; } // base64 png
-    // image 2-4mb bytes => string/base64 png
+    public string ImageBase64 { get; set; }
     public DateTime PublishedDate { get; set; }
     public virtual List<BookCopy> BookCopies { get; set; }
-
-    public virtual List<Category> Categories { get; set; } = [];
     public virtual Author Author { get; set; }
+    public virtual ICollection<Category> Categories { get; set; }
 }
 
 public class BookCopy
@@ -141,7 +127,6 @@ public class PrnContext : DbContext
     public DbSet<Author> Authors { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<Category> Categories { get; set; }
-    public DbSet<BookCategory> BookCategory { get; set; }
     public DbSet<BookCopy> BookCopies { get; set; }
     public DbSet<Rental> Rentals { get; set; }
     public DbSet<User> Users { get; set; }
@@ -150,7 +135,6 @@ public class PrnContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<BookCategory>().HasKey(bc => new { bc.BookId, bc.CategoryId });
         modelBuilder.Entity<Author>().HasData(
             new Author { Id = 1, Name = "George Orwell" },
             new Author { Id = 2, Name = "Harper Lee" },
@@ -163,11 +147,29 @@ public class PrnContext : DbContext
             new Category { Id = 3, Name = "Drama" }
         );
 
-        modelBuilder.Entity<Book>().HasData(
-            new Book { Id = 1, Title = "1984", AuthorId = 1, PublishedDate = new DateTime(1949, 6, 8), ImageBase64 = "" },
-            new Book { Id = 2, Title = "To Kill a Mockingbird", AuthorId = 2, PublishedDate = new DateTime(1960, 7, 11), ImageBase64 = "" },
-            new Book { Id = 3, Title = "The Great Gatsby", AuthorId = 3, PublishedDate = new DateTime(1925, 4, 10), ImageBase64 = "" }
-        );
+        modelBuilder.Entity<Book>(entity =>
+        {
+            entity.HasData(
+                        new Book { Id = 1, Title = "1984", AuthorId = 1, PublishedDate = new DateTime(1949, 6, 8), ImageBase64 = "" },
+                        new Book { Id = 2, Title = "To Kill a Mockingbird", AuthorId = 2, PublishedDate = new DateTime(1960, 7, 11), ImageBase64 = "" },
+                        new Book { Id = 3, Title = "The Great Gatsby", AuthorId = 3, PublishedDate = new DateTime(1925, 4, 10), ImageBase64 = "" }
+                    );
+
+
+            entity.HasMany(b => b.Categories)
+            .WithMany(c => c.Books)
+            .UsingEntity(j => j.HasData(
+                new { BooksId = 1, CategoriesId = 1 },
+                new { BooksId = 1, CategoriesId = 2 },
+                new { BooksId = 1, CategoriesId = 3 },
+                new { BooksId = 2, CategoriesId = 1 },
+                new { BooksId = 2, CategoriesId = 2 },
+                new { BooksId = 2, CategoriesId = 3 },
+                new { BooksId = 3, CategoriesId = 1 },
+                new { BooksId = 3, CategoriesId = 2 },
+                new { BooksId = 3, CategoriesId = 3 }
+            ));
+        });
 
         modelBuilder.Entity<BookCopy>().HasData(
             new BookCopy { Id = 1, BookId = 1, Status = "available", Condition = "new", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
@@ -182,11 +184,6 @@ public class PrnContext : DbContext
             new User { Id = 3, Username = "librarian", Password = "librarypass", Active = true, Role = "staff", Email = "staff1@example.com" }
         );
 
-        modelBuilder.Entity<BookCategory>().HasData(
-            new BookCategory { BookId = 1, CategoryId = 2 }, // 1984 - Dystopian
-            new BookCategory { BookId = 2, CategoryId = 3 }, // To Kill a Mockingbird - Drama
-            new BookCategory { BookId = 3, CategoryId = 1 }  // Gatsby - Classic
-        );
         modelBuilder.Entity<Rule>().HasData(
             new Rule { Id = 1, Title = "rule 1", Content = "none", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
         );
