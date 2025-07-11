@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace LibararyWebApplication.Controllers
         }
 
         // GET: api/Users
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -35,6 +37,24 @@ namespace LibararyWebApplication.Controllers
 
             return user;
         }
+
+        [HttpGet("by-username/{username}")]
+        public async Task<ActionResult<User>> GetUserByUsername(string? username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return BadRequest("Username is required");
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
         // PUT: api/Users/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
@@ -66,6 +86,7 @@ namespace LibararyWebApplication.Controllers
         }
 
         // PUT: api/Users/5/role
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}/role")]
         public async Task<IActionResult> UpdateUserRole(int id, [FromBody] RoleUpdateModel model)
         {
@@ -114,6 +135,7 @@ namespace LibararyWebApplication.Controllers
         }
 
         // DELETE: api/Users/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
