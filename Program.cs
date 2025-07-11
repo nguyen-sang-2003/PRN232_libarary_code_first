@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using PRNLibrary.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -11,8 +12,17 @@ builder.Services.AddDbContext<PrnContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
-var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
+// JWT AUTHENTICATION
+var jwtSettings_1 = builder.Configuration.GetSection("Jwt");
+var jwtSettings = jwtSettings_1.Get<JwtSettings>();
+
+if (jwtSettings == null)
+{
+    throw new InvalidOperationException("JWT settings are not configured properly.");
+}
+
+builder.Services.Configure<JwtSettings>(jwtSettings_1);
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -31,18 +41,31 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
     };
 });
-
 builder.Services.AddSingleton<TokenService>();
+
+// EMAIL SERVICE
+var emailSettingsSection = builder.Configuration.GetSection("EmailServiceSettings");
+if (emailSettingsSection == null)
+{
+    throw new InvalidOperationException("Email service settings are not configured properly.");
+}
+
+builder.Services.Configure<EmailServiceSettings>(emailSettingsSection);
+builder.Services.AddSingleton<EmailService>();
+
+// RAZOR PAGES
+builder.Services.AddRazorPages();
+// BLAZOR COMPONENTS
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 
 
 builder.Services.AddControllers();
-builder.Services.AddRazorPages();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

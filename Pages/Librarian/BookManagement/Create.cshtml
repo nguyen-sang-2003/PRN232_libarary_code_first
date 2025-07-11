@@ -19,8 +19,12 @@
                 <span asp-validation-for="Book.Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Book.AuthorId" class="control-label"></label>
+                <label asp-for="Book.AuthorId" class="control-label">Author</label>
                 <select asp-for="Book.AuthorId" class ="form-control" asp-items="ViewBag.AuthorId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Book.AuthorId" class="control-label">Categories</label>
+                <select asp-for="Book.AuthorId" class="form-control" asp-items="ViewBag.Categories"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Book.ImageBase64" class="control-label"></label>

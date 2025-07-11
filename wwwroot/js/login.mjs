@@ -1,28 +1,4 @@
-function get_current_token(){
-    let token_from_localstorage = localStorage.getItem("token");
-    let token_from_cookies = document.cookie.split('; ').find(row => row.startsWith('token='));
-    token_from_cookies = token_from_cookies ? token_from_cookies.split('=')[1] : null;
-    if (token_from_localstorage) {
-        return token_from_localstorage;
-    } else if (token_from_cookies) {
-        return token_from_cookies;
-    } else {
-        return null;
-    }
-}
-
-function invalidate_token() {
-    localStorage.removeItem("token");
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    console.log("Token invalidated");
-}
-
-function set_token(token) {
-    localStorage.setItem("token", token);
-    // Set the token in cookies as well
-    document.cookie = `token=${token}; path=/;`;
-    console.log("Token set:", token);
-}
+import { get_current_token, invalidate_token, set_token } from "/js/utils.mjs";
 
 function on_login_button_click() {
     // TODO show loading state
@@ -63,40 +39,17 @@ function on_login_button_click() {
     });
 }
 
-function on_register_button_click() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    if (username && password) {
-        fetch("/api/users/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password })
-        })
-        .then(res => {
-            if (!res.ok) {
-                // log all information about the response
-                console.error("Registration failed:", res.statusText);
-                console.error("Response status:", res.status);
-                console.error("Response headers:", res.headers);
-
-                throw new Error("Registration failed");
-            }
-            return res.json();
-        })
-        .then(data => {
-            alert("Registration successful");
-            // send requests to login
-            on_login_button_click();
-        })
-        .catch(err => {
-            alert("Registration failed: " + err.message);
-        });
-    }
-}
-
 document.addEventListener("DOMContentLoaded", function() {
     const token = get_current_token();
     if (token) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get('return_url');
+        if (returnUrl) {
+            // Redirect to the return URL if it exists
+            window.location.href = returnUrl;
+            return;
+        }
+
         // Fetch user info using token
         fetch("/api/users/info", {
             headers: {
@@ -129,16 +82,12 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     document.getElementById("logout-btn").onclick = function() {
-        localStorage.removeItem("token");
+        invalidate_token();
         location.reload();
     };
 
     document.getElementById("login-form").onsubmit = function(e) {
         e.preventDefault();
         on_login_button_click();
-    };
-
-    document.getElementById("register-btn").onclick = function() {
-        on_register_button_click();
     };
 });

@@ -1,0 +1,81 @@
+@page
+@model LibararyWebApplication.Pages.Librarian.RentalManagement.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Rental[0].Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rental[0].RentalDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rental[0].DueDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rental[0].CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rental[0].UpdatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rental[0].UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rental[0].BookName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <form method="post">
+@foreach (var item in Model.Rental) {
+                <input style="display: none" name="Id" value="@item.Id">
+        <tr>
+            <td>
+                    <select name="Status">
+                        <option value="Borrowing" selected="@(item.Status == "Borrowing")">Borrowing</option>
+                        <option value="Borrowed" selected="@(item.Status == "Borrowed")">Borrowed</option>
+                        <option value="Returned" selected="@(item.Status == "Returned")">Returned</option>
+                    </select>
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RentalDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BookName)
+            </td>
+            <td>
+                <button type="submit">Save</button> |
+
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+            }
+            </form>
+    </tbody>
+</table>

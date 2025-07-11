@@ -17,15 +17,15 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
             _context = context;
         }
 
-        public IList<Book> Book { get;set; } = default!;
+        public IList<BookViewDTO> Book { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
             using HttpClient client = new HttpClient();
           string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}"; // đổi theo địa chỉ backend bạn chạy
 
-            Book = await client.GetFromJsonAsync<List<Book>>($"{api_endpoint}/api/Books");
-
+            var Rental = await client.GetFromJsonAsync<List<BookViewDTO>>($"{api_endpoint}/api/Books");
+            Book = Rental;
         }
     }
 }
