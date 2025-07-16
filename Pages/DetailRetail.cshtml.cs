@@ -35,7 +35,7 @@ namespace LibararyWebApplication.Pages
                 }
                 if (existing_token == null)
                 {
-                    return Redirect("/login");
+                    return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
                 }
 
                 if (existing_token.StartsWith("Bearer "))
@@ -52,7 +52,7 @@ namespace LibararyWebApplication.Pages
 
                 if (string.IsNullOrEmpty(username))
                 {
-                    return Redirect("/login");
+                    return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
                 }
 
                 httpClient.DefaultRequestHeaders.Authorization =

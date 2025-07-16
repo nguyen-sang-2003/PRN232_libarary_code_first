@@ -42,7 +42,7 @@ namespace LibararyWebApplication.Pages.RuleManager
             }
             if (existing_token == null)
             {
-                return Redirect("/login");
+                return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
             }
 
             if (existing_token.StartsWith("Bearer "))
@@ -59,7 +59,7 @@ namespace LibararyWebApplication.Pages.RuleManager
 
             if (string.IsNullOrEmpty(role) || role != "admin")
             {
-                return Redirect("/login");
+                return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
             }
 
             httpClient.DefaultRequestHeaders.Authorization =

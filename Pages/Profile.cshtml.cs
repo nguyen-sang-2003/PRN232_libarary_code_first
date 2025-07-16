@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Web;
 
 namespace LibararyWebApplication.Pages
 {
@@ -13,14 +14,15 @@ namespace LibararyWebApplication.Pages
         public User? User { get; set; }
         public string existing_token { get; set; }
         private HttpClient httpClient = new HttpClient();
-        public ProfileModel(HttpClient _httpClient) {
+        public ProfileModel(HttpClient _httpClient)
+        {
             httpClient = _httpClient;
         }
         public async Task<IActionResult> OnGetAsync()
         {
             try
             {
-                
+
                 string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
 
                 string current_host = HttpContext.Request.Host.ToString();
@@ -32,7 +34,7 @@ namespace LibararyWebApplication.Pages
                 }
                 if (existing_token == null)
                 {
-                    return Redirect("/login");
+                    return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
                 }
 
                 // Xử lý nếu token có dạng "Bearer xxx"
@@ -50,7 +52,7 @@ namespace LibararyWebApplication.Pages
 
                 if (string.IsNullOrEmpty(username))
                 {
-                    return Redirect("/login");
+                    return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
                 }
 
                 httpClient.DefaultRequestHeaders.Authorization =
