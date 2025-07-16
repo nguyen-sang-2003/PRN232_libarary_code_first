@@ -45,7 +45,7 @@ namespace LibararyWebApplication.Pages
 
             if (string.IsNullOrEmpty(existing_token))
             {
-                return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
+                return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
             }
 
             if (existing_token.StartsWith("Bearer "))
@@ -63,7 +63,7 @@ namespace LibararyWebApplication.Pages
                                     ?.Value;
             if (string.IsNullOrEmpty(role) || role != "admin")
             {
-                return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
+                return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
             }
 
             var response = await httpClient.GetAsync(ApiBase);
@@ -111,7 +111,7 @@ namespace LibararyWebApplication.Pages
                                     ?.Value;
             if (string.IsNullOrEmpty(role) || role != "admin")
             {
-                return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
+                return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
             }
 
             var response = await httpClient.DeleteAsync($"{ApiBase}/{id}");
@@ -139,7 +139,7 @@ namespace LibararyWebApplication.Pages
                                     ?.Value;
             if (string.IsNullOrEmpty(role) || role != "admin")
             {
-                return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
+                return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
             }
 
             var content = new StringContent(JsonConvert.SerializeObject(new { Role = newRole }), Encoding.UTF8, "application/json");

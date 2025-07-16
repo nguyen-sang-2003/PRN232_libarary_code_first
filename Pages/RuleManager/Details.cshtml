@@ -2,7 +2,7 @@
 @model LibararyWebApplication.Pages.RuleManager.DetailsModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Chi tiết nội quy";
+    ViewData["Title"] = "Rule Details";
 }
 
 <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
@@ -10,28 +10,28 @@
 <div class="container mt-5">
     <div class="card shadow rounded-4">
         <div class="card-header bg-info text-white">
-            <h4 class="mb-0">📄 Chi tiết nội quy</h4>
+            <h4 class="mb-0">📄 Rule Details</h4>
         </div>
 
         <div class="card-body">
             <dl class="row">
-                <dt class="col-sm-3 fw-bold">📝 Tiêu đề</dt>
+                <dt class="col-sm-3 fw-bold">📝 Title</dt>
                 <dd class="col-sm-9">@Model.Rule.Title</dd>
 
-                <dt class="col-sm-3 fw-bold">📌 Nội dung</dt>
+                <dt class="col-sm-3 fw-bold">📌 Content</dt>
                 <dd class="col-sm-9">@Model.Rule.Content</dd>
 
-                <dt class="col-sm-3 fw-bold">📅 Ngày tạo</dt>
+                <dt class="col-sm-3 fw-bold">📅 Created At</dt>
                 <dd class="col-sm-9">@Model.Rule.CreatedAt.ToString("dd/MM/yyyy")</dd>
 
-                <dt class="col-sm-3 fw-bold">🔄 Ngày cập nhật</dt>
+                <dt class="col-sm-3 fw-bold">🔄 Last Updated</dt>
                 <dd class="col-sm-9">@Model.Rule.UpdatedAt.ToString("dd/MM/yyyy")</dd>
             </dl>
         </div>
 
         <div class="card-footer d-flex justify-content-between">
-            <a asp-page="./Edit" asp-route-id="@Model.Rule.Id" class="btn btn-warning">✏️ Chỉnh sửa</a>
-            <a asp-page="./Index" class="btn btn-secondary">↩️ Quay lại danh sách</a>
+            <a asp-page="./Edit" asp-route-id="@Model.Rule.Id" class="btn btn-warning">✏️ Edit</a>
+            <a asp-page="./Index" class="btn btn-secondary">↩️ Back to List</a>
         </div>
     </div>
 </div>

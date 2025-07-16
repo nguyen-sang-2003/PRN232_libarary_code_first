@@ -7,29 +7,29 @@
 }
 <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
 
-@* <h1>Trang hiện tại: @(Model.Page?.ToString() ?? "null")</h1> *@
+@* <h1>Current Page: @(Model.Page?.ToString() ?? "null")</h1> *@
 
 <div class="container mt-5">
     <div class="card shadow">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">📋 Quản lý người dùng</h4>
+            <h4 class="mb-0">📋 User Management</h4>
         </div>
 
         <div class="card-body">
             <form method="get" class="row mb-3 g-2">
                 <div class="col-md-5">
-                    <input name="SearchTerm" class="form-control" placeholder="🔍 Tìm kiếm người dùng..." value="@Model.SearchTerm" />
+                    <input name="SearchTerm" class="form-control" placeholder="🔍 Search users..." value="@Model.SearchTerm" />
                 </div>
                 <div class="col-md-3">
                     <select name="RoleFilter" class="form-select">
-                        <option value="">-- Tất cả vai trò --</option>
+                        <option value="">-- All Roles --</option>
                         <option value="admin" selected="@("admin" == Model.RoleFilter)">Admin</option>
                         <option value="staff" selected="@("staff" == Model.RoleFilter)">Staff</option>
                         <option value="user" selected="@("user" == Model.RoleFilter)">User</option>
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-secondary w-100">Lọc</button>
+                    <button type="submit" class="btn btn-secondary w-100">Filter</button>
                 </div>
             </form>
 
@@ -40,10 +40,10 @@
                         <thead class="table-secondary text-center">
                             <tr>
                                 <th>ID</th>
-                                <th>👤 Tài khoản</th>
-                                <th>🎭 Vai trò</th>
-                                <th>✅ Trạng thái</th>
-                                @* <th>⚙️ Hành động</th> *@
+                                <th>👤 Username</th>
+                                <th>🎭 Role</th>
+                                <th>✅ Status</th>
+                                @* <th>⚙️ Action</th> *@
                             </tr>
                         </thead>
                         <tbody>
@@ -60,11 +60,11 @@
                                         <td>
                                             @if (user.Active)
                                             {
-                                                <span class="badge bg-success">Hoạt động</span>
+                                                <span class="badge bg-success">Active</span>
                                             }
                                             else
                                             {
-                                                <span class="badge bg-secondary">Đã khóa</span>
+                                                <span class="badge bg-secondary">Disabled</span>
                                             }
                                         </td>
                                     </tr>
@@ -87,16 +87,16 @@
                                         <td>
                                             @if (user.Active)
                                             {
-                                                <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Xác nhận khóa người dùng?')">
+                                                <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Confirm disabling this user?')">
                                                     <input type="hidden" name="Id" value="@user.Id" />
                                                     <button type="submit" class="badge bg-success">
-                                                        <span>Hoạt động</span>
+                                                        <span>Active</span>
                                                     </button>
                                                 </form>
                                             }
                                             else
                                             {
-                                                <span class="badge bg-secondary">Đã khóa</span>
+                                                <span class="badge bg-secondary">Disabled</span>
                                             }
                                         </td>
                                     </tr>
@@ -119,7 +119,7 @@
             }
             else
             {
-                <div class="alert alert-info">🔍 Không tìm thấy người dùng nào phù hợp.</div>
+                <div class="alert alert-info">🔍 No matching users found.</div>
             }
         </div>
     </div>

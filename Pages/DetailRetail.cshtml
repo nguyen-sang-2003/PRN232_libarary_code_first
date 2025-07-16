@@ -2,7 +2,7 @@
 @model LibararyWebApplication.Pages.DetailRetailModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Detail Retail";
+    ViewData["Title"] = "Rental Details";
 }
 
 <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
@@ -16,7 +16,7 @@
 <div class="container mt-5">
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
-            <h4>📘 Chi tiết đơn mượn #@Model.Detail?.RentalId</h4>
+            <h4>📘 Rental Details #@Model.Detail?.RentalId</h4>
         </div>
         <div class="card-body">
             @if (Model.Detail != null)
@@ -30,7 +30,7 @@
                         <img src="data:image/png;base64,@Model.Detail.ImageBase64" alt="Book Image" style="max-height: 200px;" />
                     </dd>
 
-                    <dt class="col-sm-3">📅 Rentail Date:</dt>
+                    <dt class="col-sm-3">📅 Rental Date:</dt>
                     <dd class="col-sm-9">@Model.Detail.RentailDate.ToString("dd/MM/yyyy")</dd>
 
                     <dt class="col-sm-3">📆 Due Date:</dt>
@@ -42,22 +42,22 @@
                     <dt class="col-sm-3">📌 Status:</dt>
                     <dd class="col-sm-9">@Model.Detail.Status</dd>
 
-                    <dt class="col-sm-3">📌 Số lần gia hạn:</dt>
+                    <dt class="col-sm-3">🔁 Number of Renewals:</dt>
                     <dd class="col-sm-9">@Model.Detail.RenewCount</dd>
 
-                    <dt class="col-sm-3">📆 Ngày phải trả:</dt>
+                    <dt class="col-sm-3">📆 Final Return Date:</dt>
                     <dd class="col-sm-9">@Model.Detail.DueDate.AddDays(3 * Model.Detail.RenewCount).ToString("dd/MM/yyyy")</dd>
                 </dl>
             }
             else
             {
-                <div class="alert alert-danger">Không tìm thấy đơn mượn.</div>
+                <div class="alert alert-danger">Rental record not found.</div>
             }
         </div>
         @if (Model.Detail != null)
         {
             <div class="card-footer mt-4 d-flex gap-3">
-                <form method="post" asp-page-handler="Renew" onsubmit="return confirm('Xác nhận gia hạn sách?')">
+                <form method="post" asp-page-handler="Renew" onsubmit="return confirm('Confirm book renewal?')">
                     <input type="hidden" name="RentalId" value="@Model.Detail.RentalId" />
                     <button type="submit" class="btn btn-warning">🔁 Renew Book</button>
                 </form>

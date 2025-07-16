@@ -34,7 +34,7 @@ namespace LibararyWebApplication.Pages
                 }
                 if (existing_token == null)
                 {
-                    return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
+                    return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
                 }
 
                 // Xử lý nếu token có dạng "Bearer xxx"
@@ -52,7 +52,7 @@ namespace LibararyWebApplication.Pages
 
                 if (string.IsNullOrEmpty(username))
                 {
-                    return Redirect($"/login?return_url={HttpUtility.UrlEncode(HttpContext.Request.Path)}");
+                    return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
                 }
 
                 httpClient.DefaultRequestHeaders.Authorization =
