@@ -18,11 +18,15 @@ namespace LibararyWebApplication.Pages
         public DetailRentail? Detail { get; set; }
         private string ApiBase => $"http://{HttpContext.Request.Host}";
         public string existing_token { get; set; }
+        private HttpClient httpClient = new HttpClient();
+        public DetailRetailModel(HttpClient _httpClient) {
+            httpClient = _httpClient;
+        }
         public async Task<ActionResult>  OnGetAsync()
         {
             try
             {
-                using var httpClient = new HttpClient();
+                
 
                 existing_token = Request.Headers.Authorization;
                 if (existing_token == null)
@@ -82,7 +86,7 @@ namespace LibararyWebApplication.Pages
         }
         public async Task<IActionResult> OnPostRenewAsync(int RentalId)
         {
-            using var httpClient = new HttpClient();
+            //using var httpClient = new HttpClient();
 
             var response1 = await httpClient.GetAsync($"{ApiBase}/api/Returns/rental-detail?rentailId={rentailId}");
             if (!response1.IsSuccessStatusCode) return Page();

@@ -15,10 +15,11 @@ namespace LibararyWebApplication.Pages.RuleManager
     public class EditModel : PageModel
     {
         private readonly PrnContext _context;
-
-        public EditModel(PrnContext context)
+        private HttpClient httpClient = new HttpClient();
+        public EditModel(PrnContext context, HttpClient httpClient)
         {
             _context = context;
+            this.httpClient = httpClient;
         }
 
         [BindProperty]
@@ -33,7 +34,6 @@ namespace LibararyWebApplication.Pages.RuleManager
                 return NotFound();
             }
 
-            using var httpClient = new HttpClient();
 
             existing_token = Request.Headers.Authorization;
             if (existing_token == null)

@@ -15,10 +15,12 @@ namespace LibararyWebApplication.Pages.RuleManager
     public class DetailsModel : PageModel
     {
         private readonly PrnContext _context;
+        private HttpClient httpClient = new HttpClient();
 
-        public DetailsModel(PrnContext context)
+        public DetailsModel(PrnContext context, HttpClient httpClient)
         {
             _context = context;
+            this.httpClient = httpClient;
         }
 
         public Rule Rule { get; set; }
@@ -32,7 +34,6 @@ namespace LibararyWebApplication.Pages.RuleManager
                 return NotFound();
             }
 
-            using var httpClient = new HttpClient();
 
             existing_token = Request.Headers.Authorization;
             if (existing_token == null)

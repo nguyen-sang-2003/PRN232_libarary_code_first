@@ -29,10 +29,13 @@ namespace LibararyWebApplication.Pages
 
         private string ApiBase => $"http://{HttpContext.Request.Host}/api/Users";
         public string existing_token { get; set; }
+        private HttpClient httpClient = new HttpClient();
+        public UserAdminModel(HttpClient _httpClient) {
+            httpClient = _httpClient;
+        }
         public async Task<IActionResult> OnGetAsync()
         {
             //Console.WriteLine($"[LOG] SearchTerm = '{SearchTerm}', RoleFilter = '{RoleFilter}', Page = {Page}");
-            using var httpClient = new HttpClient();
 
             existing_token = Request.Headers["Authorization"];
             if (string.IsNullOrEmpty(existing_token))
@@ -93,7 +96,7 @@ namespace LibararyWebApplication.Pages
 
         public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
-            using var httpClient = new HttpClient();
+            //using var httpClient = new HttpClient();
 
             existing_token = Request.Cookies["token"];
             if (!string.IsNullOrEmpty(existing_token))

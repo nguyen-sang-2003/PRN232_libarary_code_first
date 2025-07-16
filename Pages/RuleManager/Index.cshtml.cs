@@ -11,10 +11,11 @@ namespace LibararyWebApplication.Pages.RuleManager
     {
         private readonly PrnContext _context;
 
-
-        public IndexModel(PrnContext context)
+        private HttpClient httpClient = new HttpClient();
+        public IndexModel(PrnContext context, HttpClient httpClient)
         {
             _context = context;
+            this.httpClient = httpClient;
         }
 
         public IList<Rule> Rule { get; set; } = new List<Rule>();
@@ -29,10 +30,10 @@ namespace LibararyWebApplication.Pages.RuleManager
 
         private string ApiBase => $"http://{HttpContext.Request.Host}/api/Rules";
         public string existing_token { get; set; }
+
         public async Task<ActionResult> OnGetAsync()
         {
 
-            using var httpClient = new HttpClient();
 
             existing_token = Request.Headers.Authorization;
             if (existing_token == null)

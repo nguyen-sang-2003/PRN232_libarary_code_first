@@ -14,10 +14,12 @@ namespace LibararyWebApplication.Pages.RuleManager
     public class DeleteModel : PageModel
     {
         private readonly PrnContext _context;
+        private HttpClient httpClient = new HttpClient();
 
-        public DeleteModel(PrnContext context)
+        public DeleteModel(PrnContext context, HttpClient httpClient)
         {
             _context = context;
+            this.httpClient = httpClient;
         }
 
         [BindProperty]
@@ -32,7 +34,6 @@ namespace LibararyWebApplication.Pages.RuleManager
                 return NotFound();
             }
 
-            using var httpClient = new HttpClient();
 
             existing_token = Request.Headers.Authorization;
             if (existing_token == null)

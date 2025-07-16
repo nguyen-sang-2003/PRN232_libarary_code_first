@@ -12,11 +12,15 @@ namespace LibararyWebApplication.Pages
     {
         public User? User { get; set; }
         public string existing_token { get; set; }
+        private HttpClient httpClient = new HttpClient();
+        public ProfileModel(HttpClient _httpClient) {
+            httpClient = _httpClient;
+        }
         public async Task<IActionResult> OnGetAsync()
         {
             try
             {
-                HttpClient httpClient = new HttpClient();
+                
                 string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
 
                 string current_host = HttpContext.Request.Host.ToString();

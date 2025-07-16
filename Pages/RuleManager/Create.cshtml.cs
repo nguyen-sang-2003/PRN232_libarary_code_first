@@ -17,16 +17,17 @@ namespace LibararyWebApplication.Pages.RuleManager
     {
         private readonly PrnContext _context;
         public string existing_token { get; set; }
+        private HttpClient httpClient = new HttpClient();
 
-        public CreateModel(PrnContext context)
+        public CreateModel(PrnContext context, HttpClient httpClient)
         {
             _context = context;
+            this.httpClient = httpClient;
         }
         private string ApiBase => $"http://{HttpContext.Request.Host}/api/Rules";
 
         public IActionResult OnGet()
         {
-            using var httpClient = new HttpClient();
             existing_token = Request.Headers.Authorization;
             if (existing_token == null)
             {
