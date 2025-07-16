@@ -2,7 +2,7 @@
 @model LibararyWebApplication.Pages.RuleManager.IndexModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Quản lý nội quy thư viện";
+    ViewData["Title"] = "Library Rule Management";
 }
 
 <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
@@ -10,14 +10,14 @@
 <div class="container mt-5">
     <div class="card shadow rounded-4">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">📚 Quản lý nội quy thư viện</h4>
-            <a asp-page="Create" class="btn btn-light btn-sm">➕ Thêm nội quy</a>
+            <h4 class="mb-0">📚 Library Rule Management</h4>
+            <a asp-page="Create" class="btn btn-light btn-sm">➕ Add Rule</a>
         </div>
 
         <div class="card-body">
             <form method="get" class="mb-3 d-flex gap-2">
-                <input name="SearchKeyword" value="@Model.SearchKeyword" class="form-control" placeholder="Tìm theo tiêu đề hoặc nội dung..." style="max-width: 400px;"/>
-                <button type="submit" class="btn btn-outline-primary">Tìm</button>
+                <input name="SearchKeyword" value="@Model.SearchKeyword" class="form-control" placeholder="Search by title or content..." style="max-width: 400px;" />
+                <button type="submit" class="btn btn-outline-primary">Search</button>
             </form>
 
             @if (Model.Rule != null && Model.Rule.Count > 0)
@@ -30,7 +30,7 @@
                                 <th style="width:600px">@Html.DisplayNameFor(model => model.Rule[0].Content)</th>
                                 <th>@Html.DisplayNameFor(model => model.Rule[0].CreatedAt)</th>
                                 <th>@Html.DisplayNameFor(model => model.Rule[0].UpdatedAt)</th>
-                                <th>Hành động</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,7 +54,7 @@
                     </table>
                 </div>
 
-                <!-- Phân trang -->
+                <!-- Pagination -->
                 <nav class="mt-4">
                     <ul class="pagination justify-content-center">
                         @for (int i = 1; i <= Model.TotalPages; i++)
@@ -68,7 +68,7 @@
             }
             else
             {
-                <div class="alert alert-info text-center">Không tìm thấy nội quy nào phù hợp.</div>
+                <div class="alert alert-info text-center">No matching rules found.</div>
             }
         </div>
     </div>

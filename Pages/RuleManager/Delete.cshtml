@@ -2,7 +2,7 @@
 @model LibararyWebApplication.Pages.RuleManager.DeleteModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Xóa nội quy";
+    ViewData["Title"] = "Delete Rule";
 }
 
 <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
@@ -10,32 +10,32 @@
 <div class="container mt-5">
     <div class="card shadow rounded-4 border-danger">
         <div class="card-header bg-danger text-white">
-            <h4 class="mb-0">🗑️ Xác nhận xóa nội quy</h4>
+            <h4 class="mb-0">🗑️ Confirm Rule Deletion</h4>
         </div>
 
         <div class="card-body">
-            <p class="text-danger fw-bold">Bạn có chắc chắn muốn xóa nội quy này không?</p>
+            <p class="text-danger fw-bold">Are you sure you want to delete this rule?</p>
 
             <dl class="row">
-                <dt class="col-sm-3 fw-bold">📘 Tiêu đề</dt>
+                <dt class="col-sm-3 fw-bold">📘 Title</dt>
                 <dd class="col-sm-9">@Model.Rule.Title</dd>
 
-                <dt class="col-sm-3 fw-bold">📌 Nội dung</dt>
+                <dt class="col-sm-3 fw-bold">📌 Content</dt>
                 <dd class="col-sm-9">@Model.Rule.Content</dd>
 
-                <dt class="col-sm-3 fw-bold">📅 Ngày tạo</dt>
+                <dt class="col-sm-3 fw-bold">📅 Created At</dt>
                 <dd class="col-sm-9">@Model.Rule.CreatedAt.ToString("dd/MM/yyyy")</dd>
 
-                <dt class="col-sm-3 fw-bold">🔄 Ngày cập nhật</dt>
+                <dt class="col-sm-3 fw-bold">🔄 Last Updated</dt>
                 <dd class="col-sm-9">@Model.Rule.UpdatedAt.ToString("dd/MM/yyyy")</dd>
             </dl>
         </div>
 
         <div class="card-footer d-flex justify-content-between">
-            <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa nội quy này?')">
+            <form method="post" onsubmit="return confirm('Are you sure you want to delete this rule?')">
                 <input type="hidden" asp-for="Rule.Id" />
-                <button type="submit" class="btn btn-danger">🗑️ Xóa</button>
-                <a asp-page="./Index" class="btn btn-secondary ms-2">↩️ Quay lại</a>
+                <button type="submit" class="btn btn-danger">🗑️ Delete</button>
+                <a asp-page="./Index" class="btn btn-secondary ms-2">↩️ Back</a>
             </form>
         </div>
     </div>

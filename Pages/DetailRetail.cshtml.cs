@@ -107,10 +107,21 @@ namespace LibararyWebApplication.Pages
                 Console.WriteLine($"Lỗi khi gọi API: {response1.StatusCode}");
             }
 
-            if (Detail != null && Detail.RenewCount >= 3)
+            if (Detail != null)
             {
-                ErrorMessage = "Bạn không thể gia hạn thêm lần nào nữa (tối đa 3 lần).";
-                return RedirectToPage(new { rentailId = RentalId });
+                // Kiểm tra số lần gia hạn
+                if (Detail.RenewCount >= 3)
+                {
+                    ErrorMessage = "Bạn không thể gia hạn thêm lần nào nữa (tối đa 3 lần).";
+                    return RedirectToPage(new { rentailId = RentalId });
+                }
+
+                // Kiểm tra ngày phải trả
+                if (Detail.DueDate.Date != DateTime.Now.Date.AddDays(1))
+                {
+                    ErrorMessage = "Bạn chỉ có thể gia hạn trước ngày phải trả đúng 1 ngày.";
+                    return RedirectToPage(new { rentailId = RentalId });
+                }
             }
 
             string api_url = $"{ApiBase}/api/users/rental/renew-book?rentalId={RentalId}";
