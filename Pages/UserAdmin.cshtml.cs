@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 
 namespace LibararyWebApplication.Pages
@@ -24,13 +28,46 @@ namespace LibararyWebApplication.Pages
         public int CurrentPage;
 
         private string ApiBase => $"http://{HttpContext.Request.Host}/api/Users";
-
-        public async Task OnGetAsync()
+        public string existing_token { get; set; }
+        private HttpClient httpClient = new HttpClient();
+        public UserAdminModel(HttpClient _httpClient) {
+            httpClient = _httpClient;
+        }
+        public async Task<IActionResult> OnGetAsync()
         {
             //Console.WriteLine($"[LOG] SearchTerm = '{SearchTerm}', RoleFilter = '{RoleFilter}', Page = {Page}");
-            using var httpClient = new HttpClient();
+
+            existing_token = Request.Headers["Authorization"];
+            if (string.IsNullOrEmpty(existing_token))
+            {
+                existing_token = Request.Cookies["token"];
+            }
+
+            if (string.IsNullOrEmpty(existing_token))
+            {
+                return Redirect("/login");
+            }
+
+            if (existing_token.StartsWith("Bearer "))
+            {
+                existing_token = existing_token.Substring("Bearer ".Length);
+            }
+
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", existing_token);
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(existing_token);
+            var role = jwtToken.Claims.FirstOrDefault(c =>
+                                    c.Type == ClaimTypes.Role || c.Type == JwtRegisteredClaimNames.Jti)
+                                    ?.Value;
+            if (string.IsNullOrEmpty(role) || role != "admin")
+            {
+                return Redirect("/login");
+            }
+
             var response = await httpClient.GetAsync(ApiBase);
-            if (!response.IsSuccessStatusCode) return;
+            if (!response.IsSuccessStatusCode) return Page();
 
             var json = await response.Content.ReadAsStringAsync();
             var allUsers = JsonConvert.DeserializeObject<List<User>>(json) ?? new();
@@ -54,11 +91,29 @@ namespace LibararyWebApplication.Pages
                 .Skip((currentPage - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
-            using var httpClient = new HttpClient();
+            //using var httpClient = new HttpClient();
+
+            existing_token = Request.Cookies["token"];
+            if (!string.IsNullOrEmpty(existing_token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", existing_token);
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(existing_token);
+            var role = jwtToken.Claims.FirstOrDefault(c =>
+                                    c.Type == ClaimTypes.Role || c.Type == JwtRegisteredClaimNames.Jti)
+                                    ?.Value;
+            if (string.IsNullOrEmpty(role) || role != "admin")
+            {
+                return Redirect("/login");
+            }
+
             var response = await httpClient.DeleteAsync($"{ApiBase}/{id}");
             if (!response.IsSuccessStatusCode)
             {
@@ -70,6 +125,23 @@ namespace LibararyWebApplication.Pages
         public async Task<IActionResult> OnPostChangeRoleAsync(int id, string newRole)
         {
             using var httpClient = new HttpClient();
+
+            existing_token = Request.Cookies["token"];
+            if (!string.IsNullOrEmpty(existing_token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", existing_token);
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(existing_token);
+            var role = jwtToken.Claims.FirstOrDefault(c =>
+                                    c.Type == ClaimTypes.Role || c.Type == JwtRegisteredClaimNames.Jti)
+                                    ?.Value;
+            if (string.IsNullOrEmpty(role) || role != "admin")
+            {
+                return Redirect("/login");
+            }
+
             var content = new StringContent(JsonConvert.SerializeObject(new { Role = newRole }), Encoding.UTF8, "application/json");
             var response = await httpClient.PutAsync($"{ApiBase}/{id}/role", content);
             if (!response.IsSuccessStatusCode)

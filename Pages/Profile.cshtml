@@ -6,7 +6,7 @@
 }
 
 <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
-
+@* <h1>@Model.existing_token</h1> *@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -18,14 +18,13 @@
 
                     @if (Model.User != null)
                     {
-                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=@Model.User.Username"
-                             class="rounded-circle mb-3"
-                             width="100" height="100"
+                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=@Model.User.Username" 
+                             class="rounded-circle mb-3" 
+                             width="100" height="100" 
                              alt="Avatar" />
 
                         <h4 class="mb-1">@Model.User.Username</h4>
-                        <p class="text-muted mb-3">Hardcode@gmail.com</p>
-                        @* <p class="text-muted mb-3">@Model.User.Email</p> *@
+                        <p class="text-muted mb-3">@Model.User.Email</p> 
 
                         <table class="table table-striped">
                             <tr>
