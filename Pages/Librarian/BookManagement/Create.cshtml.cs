@@ -74,7 +74,7 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
             var apiEndpoint = $"http://{HttpContext.Request.Host}/api/Books";
 
             // Chuyển Book sang BookDTO
-            var dto = new BookDTO   
+            var dto = new BookDTO
             {
                 Name = Book.Title,
                 AuthorId = Book.AuthorId,
@@ -87,7 +87,7 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
 
             if (response.IsSuccessStatusCode)
             {
-                
+
                 return RedirectToPage("./Index");
             }
             await LoadCategoriesAsync();
@@ -98,7 +98,7 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
         private async Task LoadCategoriesAsync()
         {
 
-           
+
             string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
             var category = await client.GetFromJsonAsync<List<Category>>($"{api_endpoint}/api/Categories");
 

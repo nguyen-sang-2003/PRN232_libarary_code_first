@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model LibararyWebApplication.Pages.Librarian.CategoriesManagement.IndexModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -34,7 +34,7 @@
                                 <td>@item.Name</td>
                                 <td class="text-center">
                                     <a asp-page="./Edit" asp-route-id="@item.id" class="btn btn-sm btn-warning me-1">✏️ Edit</a>
-                                    
+
                                     <a asp-page="./Delete" asp-route-id="@item.id" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this category?')">🗑️ Delete</a>
                                 </td>
                             </tr>

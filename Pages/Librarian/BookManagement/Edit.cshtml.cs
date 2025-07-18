@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -34,7 +34,7 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
         public async Task<IActionResult> OnGetAsync(int? id)
         {
 
-           
+
 
             // Code
             if (id == null) return NotFound();
@@ -84,7 +84,7 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
 
         public async Task<IActionResult> OnPostAsync()
         {
-           
+
 
             // Chuẩn bị dữ liệu
             var bookDto = new BookDTO
@@ -107,7 +107,7 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
             }
 
             ModelState.AddModelError(string.Empty, "Lỗi khi cập nhật sách.");
-          
+
             return Page();
         }
 

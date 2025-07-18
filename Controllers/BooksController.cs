@@ -27,7 +27,7 @@ namespace LibararyWebApplication.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookViewDTO>>> GetBooks()
         {
-           
+
             var books = await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.BookCopies)
@@ -49,14 +49,14 @@ namespace LibararyWebApplication.Controllers
 
                 })
                 .ToListAsync();
-          
-           
+
+
             return books;
         }
 
 
         // GET: api/Books/5
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(int id)
         {

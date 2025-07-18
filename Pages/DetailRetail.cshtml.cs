@@ -1,4 +1,4 @@
-﻿using LibararyWebApplication.DTO;
+using LibararyWebApplication.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -26,7 +26,7 @@ namespace LibararyWebApplication.Pages
         {
             try
             {
-                
+
 
                 existing_token = Request.Headers.Authorization;
                 if (existing_token == null)
@@ -76,7 +76,7 @@ namespace LibararyWebApplication.Pages
                 {
                     Console.WriteLine($"Lỗi khi gọi API: {response.StatusCode}");
                 }
-                
+
             }
             catch (Exception ex)
             {

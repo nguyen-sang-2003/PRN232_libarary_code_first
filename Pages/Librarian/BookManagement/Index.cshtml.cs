@@ -27,7 +27,7 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
 
         public async Task<IActionResult> OnGetAsync()
         {
-          
+
             string existing_token;
 
             existing_token = Request.Headers.Authorization;
@@ -62,11 +62,11 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
             //using HttpClient client = new HttpClient();
             string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}"; // đổi theo địa chỉ backend bạn chạy
 
-           
+
             var Rental = await _httpClient.GetFromJsonAsync<List<BookViewDTO>>($"{api_endpoint}/api/Books");
             Book = Rental;
             return Page();
         }
-        
+
     }
 }
