@@ -1,34 +1,38 @@
-@page
+﻿@page
 @model LibararyWebApplication.Pages.Librarian.CategoriesManagement.CreateModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Category";
 }
 
-<h1>Create</h1>
+<link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
 
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Category.Name" class="control-label"></label>
-                <input asp-for="Category.Name" class="form-control" />
-                <span asp-validation-for="Category.Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container mt-5">
+    <div class="card shadow rounded-4">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">➕ Create New Category</h4>
+        </div>
+
+        <div class="card-body p-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Category.Name" class="form-label fw-bold">Category Name</label>
+                    <input asp-for="Category.Name" class="form-control" placeholder="Enter category name" />
+                    <span asp-validation-for="Category.Name" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success fw-bold">💾 Create</button>
+                <a asp-page="Index" class="btn btn-secondary ms-2">↩️ Back to List</a>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-page="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

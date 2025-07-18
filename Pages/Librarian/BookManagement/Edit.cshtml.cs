@@ -1,65 +1,140 @@
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.RazorPages;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
-    namespace LibararyWebApplication.Pages.Librarian.BookManagement
+namespace LibararyWebApplication.Pages.Librarian.BookManagement
+{
+    public class EditModel : PageModel
     {
-        public class EditModel : PageModel
+        private readonly PrnContext _context;
+        public HttpClient client = new HttpClient();
+        public EditModel(PrnContext context, HttpClient client)
         {
-            private readonly PrnContext _context;
+            _context = context;
+            this.client = client;
+        }
 
-            public EditModel(PrnContext context)
+        [BindProperty]
+        public Book Book { get; set; } = default!;
+
+        [BindProperty]
+        public List<int> SelectedCategoryIds { get; set; } = new List<int>();
+
+        public List<Category> AllCategories { get; set; } = new List<Category>();
+
+        public async Task<IActionResult> OnGetAsync(int? id)
+        {
+
+           
+
+            // Code
+            if (id == null) return NotFound();
+
+            // Load book cùng categories
+            Book = await _context.Books
+                .Include(b => b.Categories)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (Book == null) return NotFound();
+
+            // Gán SelectedCategoryIds từ book
+            SelectedCategoryIds = Book.Categories.Select(c => c.Id).ToList();
+            string existing_token;
+
+            existing_token = Request.Headers.Authorization;
+            if (existing_token == null)
             {
-                _context = context;
+                existing_token = Request.Cookies["token"];
+            }
+            if (existing_token == null)
+            {
+                return Redirect("/login");
             }
 
-            [BindProperty]
-            public Book Book { get; set; } = default!;
-
-            public async Task<IActionResult> OnGetAsync(int? id)
+            if (existing_token.StartsWith("Bearer "))
             {
-                if (id == null)
-                {
-                    return NotFound();
-                }
-
-                var book =  await _context.Books.FirstOrDefaultAsync(m => m.Id == id);
-                if (book == null)
-                {
-                    return NotFound();
-                }
-                Book = book;
-               ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Id");
-                return Page();
+                existing_token = existing_token.Substring("Bearer ".Length);
             }
 
-            // To protect from overposting attacks, enable the specific properties you want to bind to.
-            // For more information, see https://aka.ms/RazorPagesCRUD.
-            public async Task<IActionResult> OnPostAsync()
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(existing_token);
+
+            var username = jwtToken.Claims.FirstOrDefault(c =>
+                                c.Type == ClaimTypes.Name || c.Type == JwtRegisteredClaimNames.Sub)
+                                ?.Value;
+
+            if (string.IsNullOrEmpty(username))
             {
-                var book = new BookDTO
-                {
-                    Name = Book.Title,
-                    AuthorId = Book.AuthorId,
-                    Image = Book.ImageBase64,
-                    PublicDate = Book.PublishedDate
-                };
-                HttpClient client = new HttpClient();
-                string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
+                return Redirect("/login");
+            }
+            // Load category & author
+            await LoadCategoriesAsync();
 
-                var respone = await client.PutAsJsonAsync($"{api_endpoint}/api/Books/{Book.Id}",book);
+            return Page();
+        }
 
+        public async Task<IActionResult> OnPostAsync()
+        {
+           
+
+            // Chuẩn bị dữ liệu
+            var bookDto = new BookDTO
+            {
+                Name = Book.Title,
+                AuthorId = Book.AuthorId,
+                Image = Book.ImageBase64,
+                PublicDate = Book.PublishedDate,
+                CategoryIds = SelectedCategoryIds
+            };
+
+            using HttpClient client = new HttpClient();
+            string api_endpoint = $"http://{HttpContext.Request.Host}";
+
+            var response = await client.PutAsJsonAsync($"{api_endpoint}/api/Books/{Book.Id}", bookDto);
+
+            if (response.IsSuccessStatusCode)
+            {
                 return RedirectToPage("./Index");
             }
 
-            private bool BookExists(int id)
-            {
-                return _context.Books.Any(e => e.Id == id);
-            }
+            ModelState.AddModelError(string.Empty, "Lỗi khi cập nhật sách.");
+          
+            return Page();
         }
+
+        private async Task LoadCategoriesAsync()
+        {
+            string? token = Request.Headers.Authorization;
+            if (string.IsNullOrEmpty(token))
+            {
+                token = Request.Cookies["token"];
+            }
+
+            if (!string.IsNullOrEmpty(token) && token.StartsWith("Bearer "))
+            {
+                token = token.Substring("Bearer ".Length);
+            }
+
+            using HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            string api_endpoint = $"http://{HttpContext.Request.Host}";
+
+            AllCategories = await client.GetFromJsonAsync<List<Category>>($"{api_endpoint}/api/Categories")
+                              ?? new List<Category>();
+
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Name");
+            ViewData["Categories"] = new SelectList(AllCategories, "Id", "Name");
+        }
+
     }
+}

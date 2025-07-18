@@ -1,61 +1,74 @@
-@page
+﻿@page
 @model LibararyWebApplication.Pages.Librarian.BookManagement.IndexModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Book Management";
 }
 
-<h1>Index</h1>
+<link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Id
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book[0].Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book[0].ImageBase64)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book[0].PublishedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book[0].AuthorId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Book) {
-        <tr>
-            <td>
-					@item.Id
-				</td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageBase64)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PublishedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AuthorId)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+<div class="container mt-5">
+    <div class="card shadow rounded-4">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">📚 Book Management</h4>
+            <a asp-page="Create" class="btn btn-light btn-sm">➕ Add Book</a>
+        </div>
 
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <div class="card-body">
+            @if (Model.Book != null && Model.Book.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle">
+                        <thead class="table-secondary text-center">
+                            <tr>
+                                <th>Id</th>
+                                <th>Title</th>
+                                <th>Cover Image</th>
+                                <th>Published Date</th>
+                                <th>Author</th>
+                                <th>Categories</th>
+                                <th>Total Copies</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Book)
+                            {
+                                <tr>
+                                    <td class="text-center">@item.Id</td>
+                                    <td>@item.Title</td>
+                                    <td class="text-center">
+                                        @if (!string.IsNullOrEmpty(item.ImageBase64))
+                                        {
+                                            <img src="data:image/jpeg;base64,@item.ImageBase64" alt="Book Cover" width="60" class="rounded shadow-sm" />
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No image</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">@item.PublishedDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@item.AuthorName</td>
+                                    <td>@string.Join(", ", item.categories.Select(c => c.Name))</td>
+                                    <td class="text-center">@item.TotalCopies</td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm">✏️</a>
+                                            <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm"
+                                               onclick="return confirm('Are you sure you want to delete this book?');">🗑️</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">No books found in the system.</div>
+            }
+        </div>
+    </div>
+</div>
