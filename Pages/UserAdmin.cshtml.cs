@@ -63,7 +63,8 @@ namespace LibararyWebApplication.Pages
                                     ?.Value;
             if (string.IsNullOrEmpty(role) || role != "admin")
             {
-                return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
+                return Unauthorized();
+                //return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
             }
 
             var response = await httpClient.GetAsync(ApiBase);
