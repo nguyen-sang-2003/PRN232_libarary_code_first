@@ -1,9 +1,8 @@
-using LibararyWebApplication.Components;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using PRNLibrary.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -55,11 +54,6 @@ builder.Services.AddSingleton<EmailService>();
 
 // RAZOR PAGES
 builder.Services.AddRazorPages();
-// BLAZOR COMPONENTS
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
-
-
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -82,7 +76,5 @@ app.MapControllers();
 app.MapRazorPages();
 
 app.UseAntiforgery();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
 
 app.Run();

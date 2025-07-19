@@ -1,0 +1,78 @@
+﻿@page "/book/{id:int}"
+@using LibararyWebApplication.DTO
+@model LibararyWebApplication.Pages.cuong.BookDetailModel
+@{
+}
+<link rel="stylesheet" href="/bootstrap/bootstrap.min.css" />
+<link rel="stylesheet" href="/app.css" />
+<link rel="stylesheet" href="/LibararyWebApplication.styles.css" />
+<link rel="icon" type="image/png" href="favicon.png" />
+
+<h3>Book Details</h3>
+@{
+	BookDto book = Model.book;
+
+	if (book == null)
+	{
+		<div class="d-flex justify-content-center my-5">
+			<div class="spinner-border text-primary" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
+	}
+	else
+	{
+		<div class="container my-5">
+			<div class="card shadow border-0">
+				<div class="row g-0 align-items-center">
+					<div class="col-md-4 text-center p-4">
+						<img src="@book.ImageBase64"
+							 class="img-fluid rounded shadow-sm"
+							 alt="@book.Title"
+							 style="max-height: 300px; object-fit: contain;" />
+					</div>
+					<div class="col-md-8">
+						<div class="card-body px-4">
+							<h3 class="card-title fw-bold text-danger">@book.Title</h3>
+							<p class="card-text fs-5 mb-1">
+								<strong>Author:</strong> @book.AuthorName
+							</p>
+							<p class="card-text fs-5 mb-1">
+								<strong>Published:</strong> @book.PublishedDate.ToShortDateString()
+							</p>
+							<p class="card-text fs-5 mb-1">
+								<strong>Total Copies:</strong> @book.TotalCopies
+							</p>
+							<p class="card-text fs-5 mb-3">
+								<strong>Available Copies:</strong> @book.AvailableCopies
+							</p>
+							<button id="borrowBtn" data-bookid="@book.Id" class="btn btn-outline-success btn-lg mt-2">
+								&larr; Borrowing
+							</button>
+							<button class="btn btn-outline-primary btn-lg mt-2" onclick="todo()">← Back to Books</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#borrowBtn').click(function() {
+        var bookId = $(this).data('bookid');
+        $.ajax({
+            url: '/api/borrowing/rentals/request?bookId=' + bookId,
+            type: 'POST',
+            success: function(response) {
+                alert('Mượn sách thành công!');
+                window.location.href = '/'; // Chuyển về trang chủ
+            },
+            error: function(xhr) {
+                alert('Mượn sách thất bại: ' + xhr.responseText);
+            }
+        });
+    });
+</script>
