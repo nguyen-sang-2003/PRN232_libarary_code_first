@@ -1,11 +1,27 @@
-import { get_current_token } from '../utils.mjs';
+// Function để lấy token từ localStorage hoặc cookie
+function getCurrentToken() {
+    let token = localStorage.getItem("token");
+    if (!token) {
+        // Lấy từ cookie nếu không có trong localStorage
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'token') {
+                token = value;
+                break;
+            }
+        }
+    }
+    return token;
+}
 
-export function initializeBorrowButtons() {
+// Khởi tạo sự kiện cho các nút mượn sách
+$(document).ready(function() {
     $('.borrowBtn').click(function() {
         var bookId = $(this).data('bookid');
 
         // Lấy token hiện tại
-        const token = get_current_token();
+        const token = getCurrentToken();
 
         if (!token) {
             alert('Bạn cần đăng nhập để mượn sách!');
@@ -34,4 +50,4 @@ export function initializeBorrowButtons() {
             }
         });
     });
-}
+});

@@ -23,20 +23,26 @@ namespace LibararyWebApplication.Controllers
             var user = HttpContext.User;
             if (user?.Identity == null || !user.Identity.IsAuthenticated)
             {
-                return Unauthorized();
+                return Unauthorized("User not authenticated");
             }
+
             string username = user.Identity.Name;
-            var user_obj =_context.Users.Where(u => u.Username == username).FirstOrDefault();
+            if (string.IsNullOrEmpty(username))
+            {
+                return Unauthorized("Username not found in token");
+            }
+
+            var user_obj = _context.Users.Where(u => u.Username == username).FirstOrDefault();
             if (user_obj == null)
             {
-                return Unauthorized();
+                return Unauthorized($"User '{username}' not found in database");
             }
 
             var availableCopy = _context.BookCopies
                 .FirstOrDefault(b => b.BookId == bookId && b.Status == "available");
 
             if (availableCopy == null)
-                return BadRequest("Không còn bản sao nào khả dụng.");
+                return BadRequest("No copy available.");
 
             var rental = new Rental
             {
@@ -55,28 +61,15 @@ namespace LibararyWebApplication.Controllers
             _context.Rentals.Add(rental);
             _context.SaveChanges();
 
-            return Ok("Đặt mượn sách thành công.");
+            return Ok(new {
+                message = "Borrowing success.",
+                userId = user_obj.Id,
+                username = user_obj.Username,
+                bookId = bookId
+            });
         }
 
-        [HttpGet("rentals/user/{userId}")]
-        public IActionResult GetUserRentals(int userId)
-        {
-            var rentals = _context.Rentals
-                .Where(r => r.UserId == userId)
-                .Include(r => r.Book)
-                .ThenInclude(bc => bc.Book)
-                .Select(r => new
-                {
-                    BookTitle = r.Book.Book.Title,
-                    RentalDate = r.RentalDate,
-                    DueDate = r.DueDate,
-                    Status = r.Status,
-                    RenewCount = r.RenewCount
-                })
-                .ToList();
 
-            return Ok(rentals);
-        }
 
         [HttpGet("history/user/{userId}")]
         public IActionResult GetUserBorrowingHistory(int userId)
@@ -99,38 +92,41 @@ namespace LibararyWebApplication.Controllers
             return Ok(history);
         }
 
-        [HttpGet("bookdetails/{bookId}")]
-        public IActionResult GetBookDetail(int bookId)
+        [Authorize(Roles = "user")]
+        [HttpGet("history/current")]
+        public IActionResult GetCurrentUserBorrowingHistory()
         {
-            var book = _context.Books
-                .Include(b => b.Author)
-                .Include(b => b.BookCopies)
-                .AsNoTracking()
-                .FirstOrDefault(b => b.Id == bookId);
-
-            if (book == null) return NotFound();
-
-            var bookInfo = new
+            var user = HttpContext.User;
+            if (user?.Identity == null || !user.Identity.IsAuthenticated)
             {
-                Id = book.Id,
-                Title = book.Title,
-                Author = book.Author.Name,
-                Year = book.PublishedDate.Year,
-                Description = "Sách thư viện - " + book.Title,
-                ImageUrl = book.ImageBase64,
-                LibraryName = "Thư Viện của thầy Thọ",
-                TotalCopies = book.BookCopies.Count,
-                AvailableCopies = book.BookCopies.Count(c => c.Status == "available"),
-                BorrowedCopies = book.BookCopies.Count(c => c.Status == "unavailable"),
-                QueueCount = _context.Rentals.Count(r => r.Book.BookId == bookId && r.Status == "borrowed"),
-                NextAvailableDate = _context.Rentals
-                    .Where(r => r.Book.BookId == bookId && r.Status == "borrowed")
-                    .OrderBy(r => r.DueDate)
-                    .Select(r => r.DueDate)
-                    .FirstOrDefault()
-            };
+                return Unauthorized();
+            }
 
-            return Ok(bookInfo);
+            string username = user.Identity.Name;
+            var user_obj = _context.Users.Where(u => u.Username == username).FirstOrDefault();
+            if (user_obj == null)
+            {
+                return Unauthorized();
+            }
+
+            var history = _context.Rentals
+                .Where(r => r.UserId == user_obj.Id)
+                .Include(r => r.Book)
+                .ThenInclude(bc => bc.Book)
+                .Select(r => new
+                {
+                    BookTitle = r.Book.Book.Title,
+                    RentalDate = r.RentalDate,
+                    DueDate = r.DueDate,
+                    Status = r.Status,
+                    RenewCount = r.RenewCount
+                })
+                .OrderByDescending(r => r.RentalDate)
+                .ToList();
+
+            return Ok(history);
         }
+
+
     }
 }

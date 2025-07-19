@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 
 namespace LibararyWebApplication.Pages.Student
 {
@@ -12,9 +13,6 @@ namespace LibararyWebApplication.Pages.Student
         {
             _clientFactory = clientFactory;
         }
-
-        [BindProperty(SupportsGet = true)]
-        public int UserId { get; set; }
 
         public string? Message { get; set; }
 
@@ -29,20 +27,28 @@ namespace LibararyWebApplication.Pages.Student
             public int RenewCount { get; set; }
         }
 
-        public async Task OnGetAsync(int userId = 1)
+        public async Task<IActionResult> OnGetAsync()
         {
-            UserId = userId;
-            var client = _clientFactory.CreateClient("BackendApi");
+            var client = _clientFactory.CreateClient();
 
-            if (UserId <= 0)
+            // Set base URL động
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            client.BaseAddress = new Uri(baseUrl);
+
+            // Thêm token thủ công
+            var token = GetTokenFromRequest();
+            if (!string.IsNullOrEmpty(token))
             {
-                Message = "UserId không hợp lệ.";
-                return;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }else{
+                 // redirect to loginq
+                 return Redirect("/login?return_url=...");
+                //  Response.Redirect("/login");
             }
 
             try
             {
-                var rentals = await client.GetFromJsonAsync<List<BorrowingHistoryItem>>($"/api/borrowing/history/user/{UserId}");
+                var rentals = await client.GetFromJsonAsync<List<BorrowingHistoryItem>>("/api/borrowing/history/current");
                 if (rentals != null)
                 {
                     Borrowings = rentals;
@@ -50,8 +56,36 @@ namespace LibararyWebApplication.Pages.Student
             }
             catch (HttpRequestException ex)
             {
-                Message = $"Không lấy được lịch sử mượn sách: {ex.Message}";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    Message = "You need to login";
+                }
+                else
+                {
+                    Message = $"Cant get book data {ex.Message}";
+                }
             }
+
+            return Page();
+        }
+
+        private string GetTokenFromRequest()
+        {
+            // Lấy token từ cookie
+            var token = Request.Cookies["token"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                return token;
+            }
+
+            // Lấy token từ Authorization header
+            var authHeader = Request.Headers.Authorization.ToString();
+            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+            {
+                return authHeader.Substring("Bearer ".Length);
+            }
+
+            return string.Empty;
         }
     }
 }
