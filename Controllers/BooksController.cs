@@ -23,7 +23,7 @@ namespace LibararyWebApplication.Controllers
 
         // GET: api/Books
         //[Authorize("Role")]
-        [Authorize(Roles = "staff")]
+        [Authorize(Roles = "staff,admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookViewDTO>>> GetBooks()
         {

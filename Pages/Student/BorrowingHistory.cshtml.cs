@@ -43,7 +43,7 @@ namespace LibararyWebApplication.Pages.Student
             try
             {
                 var rentals = await client.GetFromJsonAsync<List<BorrowingHistoryItem>>($"/api/borrowing/history/user/{UserId}");
-                if (rentals != null) 
+                if (rentals != null)
                 {
                     Borrowings = rentals;
                 }
@@ -54,4 +54,4 @@ namespace LibararyWebApplication.Pages.Student
             }
         }
     }
-} 
+}

@@ -21,7 +21,7 @@ namespace LibararyWebApplication.Controllers
         }
 
         // GET: api/Categories
-        [Authorize(Roles = "staff")]
+        //[Authorize(Roles = "staff")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<categoryDTO>>> GetCategories()
         {
@@ -79,6 +79,7 @@ namespace LibararyWebApplication.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "staff,admin")]
         public async Task<ActionResult<Category>> PostCategory([FromBody]categoryDTO category)
         {
             Category category1 = new Category
