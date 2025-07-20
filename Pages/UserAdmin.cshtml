@@ -97,7 +97,13 @@
                                             }
                                             else
                                             {
-                                                <span class="badge bg-secondary">Disabled</span>
+                                                <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Confirm active this user?')">
+                                                    <input type="hidden" name="Id" value="@user.Id" />
+                                                    <button type="submit" class="badge bg-secondary">
+                                                        <span>Disabled</span>
+                                                    </button>
+                                                </form>
+                                                @* <span class="badge bg-secondary">Disabled</span> *@
                                             }
                                         </td>
                                     </tr>

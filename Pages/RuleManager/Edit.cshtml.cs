@@ -94,7 +94,7 @@ namespace LibararyWebApplication.Pages.RuleManager
 
             Rule.UpdatedAt = DateTime.Now;
 
-            using var httpClient = new HttpClient();
+            //using var httpClient = new HttpClient();
 
             existing_token = Request.Headers.Authorization;
             if (existing_token == null)

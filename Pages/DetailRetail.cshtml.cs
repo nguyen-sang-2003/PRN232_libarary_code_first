@@ -109,17 +109,24 @@ namespace LibararyWebApplication.Pages
 
             if (Detail != null)
             {
-                // Kiểm tra số lần gia hạn
-                if (Detail.RenewCount >= 3)
+                // kiểm tra quá hạn
+                if(Detail.DueDate.Date > DateTime.Now.Date)
                 {
-                    ErrorMessage = "Bạn không thể gia hạn thêm lần nào nữa (tối đa 3 lần).";
+                    ErrorMessage = "You cannot renew because the rental is already overdue.";
                     return RedirectToPage(new { rentailId = RentalId });
                 }
-
+                
                 // Kiểm tra ngày phải trả
                 if (Detail.DueDate.Date != DateTime.Now.Date.AddDays(1))
                 {
-                    ErrorMessage = "Bạn chỉ có thể gia hạn trước ngày phải trả đúng 1 ngày.";
+                    ErrorMessage = "You can only renew the item exactly one day before the due date.";
+                    return RedirectToPage(new { rentailId = RentalId });
+                }
+
+                // Kiểm tra số lần gia hạn
+                if (Detail.RenewCount >= 3)
+                {
+                    ErrorMessage = "You cannot renew this item anymore (maximum of 3 times allowed).";
                     return RedirectToPage(new { rentailId = RentalId });
                 }
             }
