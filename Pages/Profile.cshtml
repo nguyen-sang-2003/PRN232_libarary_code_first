@@ -9,73 +9,129 @@
 
 <div class="container mt-5">
     <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3 mb-4">
-            <div class="list-group shadow-sm rounded-3">
-                <a href="#" class="list-group-item list-group-item-action active">
-                    📄 Profile
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    🔒 Change Password
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    📚 Borrowed Books
-                </a>
-            </div>
-        </div>
-
-        <!-- Profile Card -->
-        <div class="col-md-9">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-primary text-white text-center rounded-top-4">
-                    <h3 class="mb-0">User Information</h3>
+        @if(Model.User.Role == "user")
+        {
+            <!-- Sidebar -->
+            <div class="col-md-3 mb-4">
+                <div class="list-group shadow-sm rounded-3">
+                    <a href="#" class="list-group-item list-group-item-action active">
+                        📄 Profile
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        🔒 Change Password
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        📚 Borrowed Books
+                    </a>
                 </div>
-                <div class="card-body text-center">
-                    @if (Model.User != null)
-                    {
-                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=@Model.User.Username"
-                             class="rounded-circle mb-3"
-                             width="100" height="100"
-                             alt="Avatar" />
+            </div>
+            <!-- Profile Card -->
+            <div class="col-md-9">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-primary text-white text-center rounded-top-4">
+                        <h3 class="mb-0">User Information</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        @if (Model.User != null)
+                        {
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=@Model.User.Username"
+                                 class="rounded-circle mb-3"
+                                 width="100" height="100"
+                                 alt="Avatar" />
 
-                        <h4 class="mb-1">@Model.User.Username</h4>
-                        <p class="text-muted mb-3">@Model.User.Email</p>
+                            <h4 class="mb-1">@Model.User.Username</h4>
+                            <p class="text-muted mb-3">@Model.User.Email</p>
 
-                        <table class="table table-striped">
-                            <tr>
-                                <th scope="row">ID</th>
-                                <td>@Model.User.Id</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Role</th>
-                                <td>@Model.User.Role</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Status</th>
-                                <td>
-                                    @if (Model.User.Active)
-                                    {
-                                        <span class="badge bg-success">Active</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary">Inactive</span>
-                                    }
-                                </td>
-                            </tr>
-                        </table>
-                    }
-                    else
-                    {
-                        <div class="text-center">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th scope="row">ID</th>
+                                    <td>@Model.User.Id</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Role</th>
+                                    <td>@Model.User.Role</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Status</th>
+                                    <td>
+                                        @if (Model.User.Active)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading user information...</p>
                             </div>
-                            <p class="mt-2">Loading user information...</p>
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-primary text-white text-center rounded-top-4">
+                        <h3 class="mb-0">User Information</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        @if (Model.User != null)
+                        {
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=@Model.User.Username"
+                                 class="rounded-circle mb-3"
+                                 width="100" height="100"
+                                 alt="Avatar" />
+
+                            <h4 class="mb-1">@Model.User.Username</h4>
+                            <p class="text-muted mb-3">@Model.User.Email</p>
+
+                            <table class="table table-striped">
+                                <tr>
+                                    <th scope="row">ID</th>
+                                    <td>@Model.User.Id</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Role</th>
+                                    <td>@Model.User.Role</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Status</th>
+                                    <td>
+                                        @if (Model.User.Active)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading user information...</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+        }
+
     </div>
 </div>
