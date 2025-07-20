@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error(arguments);
                 console.error("Token is invalid or expired");
                 // Token invalid, show login form
-                localStorage.removeItem("token");
+                invalidate_token();
                 document.getElementById("user-info").style.display = "none";
                 document.getElementById("login-form").style.display = "block";
             });

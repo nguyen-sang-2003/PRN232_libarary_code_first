@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 
@@ -15,7 +15,7 @@ namespace LibararyWebApplication.Pages
             this.httpClient = httpClient;
         }
         public List<Rule> Rules { get; set; }
-        
+
         public async Task<ActionResult> OnGetAsync()
         {
             string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
