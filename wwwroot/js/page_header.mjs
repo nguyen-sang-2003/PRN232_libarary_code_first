@@ -12,6 +12,10 @@ function set_login_user_ui() {
     }
     let header_menu_item_login = document.getElementById('header_menu_item_login');
     if (header_menu_item_login != null) { header_menu_item_login.setAttribute('hidden', ''); }
+    let header_profile_menu_item = document.getElementById('header_profile_menu_item');
+    if (header_profile_menu_item != null) {
+        header_profile_menu_item.removeAttribute('hidden');
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -2,7 +2,6 @@
 @using Newtonsoft.Json
 @model LibararyWebApplication.Pages.cuong.HomeModel
 @{
-    Layout = "HomeLayoutHeader";
 }
 
 
@@ -36,6 +35,7 @@
 	<!-- loader  -->
 	<div class="loader_bg">
 		<div class="loader"><img src="/TemplateLibraryHomePage/images/loading.gif" alt="#" /></div>
+		@await Html.PartialAsync("HomeLayoutHeader")
 	</div>
 	<section class="slider_section">
 		<div id="myCarousel" class="carousel slide banner-main" data-ride="carousel">
