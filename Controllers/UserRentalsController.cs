@@ -16,8 +16,8 @@ namespace LibararyWebApplication.Controllers
             _context = context;
         }
         [HttpPost("/api/users/rental/renew-book")]
-        [Authorize]
-        public async Task<ActionResult> UpdateRenewBook(int rentalId)
+        //[Authorize]
+        public async Task<ActionResult<Rental>> UpdateRenewBook(int rentalId)
         {
             var result = await _context.Rentals.FirstOrDefaultAsync(rt => rt.Id == rentalId);
             if (result == null) return NotFound();

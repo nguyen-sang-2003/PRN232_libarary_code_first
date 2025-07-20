@@ -46,11 +46,11 @@ namespace LibararyWebApplication.Pages
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(existing_token);
 
-                var username = jwtToken.Claims.FirstOrDefault(c =>
-                                    c.Type == ClaimTypes.Name || c.Type == JwtRegisteredClaimNames.Sub)
+                var role = jwtToken.Claims.FirstOrDefault(c =>
+                                    c.Type == ClaimTypes.Role || c.Type == JwtRegisteredClaimNames.Jti)
                                     ?.Value;
 
-                if (string.IsNullOrEmpty(username))
+                if (string.IsNullOrEmpty(role) || role!= "user")
                 {
                     return Unauthorized();
                     //return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
@@ -111,23 +111,29 @@ namespace LibararyWebApplication.Pages
             if (Detail != null)
             {
                 // kiểm tra quá hạn
-                if(Detail.DueDate.Date > DateTime.Now.Date)
+                if(Detail.DueDate.Date < DateTime.Now.Date)
                 {
                     ErrorMessage = "You cannot renew because the rental is already overdue.";
                     return RedirectToPage(new { rentailId = RentalId });
                 }
                 
                 // Kiểm tra ngày phải trả
-                if (Detail.DueDate.Date != DateTime.Now.Date.AddDays(1))
+                else if (Detail.DueDate.Date > DateTime.Now.Date.AddDays(1))
                 {
                     ErrorMessage = "You can only renew the item exactly one day before the due date.";
                     return RedirectToPage(new { rentailId = RentalId });
                 }
 
                 // Kiểm tra số lần gia hạn
-                if (Detail.RenewCount >= 3)
+                else if (Detail.RenewCount >= 3)
                 {
                     ErrorMessage = "You cannot renew this item anymore (maximum of 3 times allowed).";
+                    return RedirectToPage(new { rentailId = RentalId });
+                }
+
+                else if(Detail.Status != "Approved")
+                {
+                    ErrorMessage = "Only the Approved status can be extended.";
                     return RedirectToPage(new { rentailId = RentalId });
                 }
             }
