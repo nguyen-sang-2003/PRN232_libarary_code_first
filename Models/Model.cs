@@ -180,18 +180,20 @@ public class PrnContext : DbContext
         );
 
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, Username = "admin", Password = "admin123", Active = true, Role = "admin", Email = "admin@example.com" },
-            new User { Id = 2, Username = "john_doe", Password = "password", Active = true, Role = "user", Email = "john_doe@example.com" },
-            new User { Id = 3, Username = "librarian", Password = "librarypass", Active = true, Role = "staff", Email = "staff1@example.com" }
+            new User { Id = 1, Username = "admin", Password = "a", Active = true, Role = "admin", Email = "admin@example.com" },
+            new User { Id = 2, Username = "john_doe", Password = "a", Active = true, Role = "user", Email = "john_doe@example.com" },
+            new User { Id = 3, Username = "librarian", Password = "a", Active = true, Role = "staff", Email = "staff1@example.com" },
+            new User { Id = 4, Username = "abc", Password = "a", Active = true, Role = "user", Email = "abc@example.com" },
+            new User { Id = 5, Username = "a", Password = "a", Active = true, Role = "user", Email = "abcd@example.com" }
         );
 
         modelBuilder.Entity<Rule>().HasData(
-            new Rule { Id = 1, Title = "rule 1", Content = "none", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+           new Rule { Id = 1, Title = "rule 1", Content = "none", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
         );
 
 
         modelBuilder.Entity<Return>().HasData(
-            new Return { Id = 1, RentalId = 1, Condition = "100%", ReturnDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+           new Return { Id = 1, RentalId = 1, Condition = "100%", ReturnDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
         );
 
         modelBuilder.Entity<Rental>().HasData(

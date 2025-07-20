@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace LibararyWebApplication.Pages.Librarian.BookManagement
 {
@@ -17,37 +13,21 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
             _context = context;
         }
 
-        [BindProperty]
-        public Book Book { get; set; } = default!;
-
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
-            HttpClient client = new HttpClient();
-            string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
-          var book = await client.GetFromJsonAsync<Book>($"{api_endpoint}/api/Books/{id}");
-            if (book == null) { return NotFound(); }
-            else {
-                Book = book;
-            }
 
+            using var httpClient = new HttpClient();
+            string apiEndpoint = $"http://{HttpContext.Request.Host}";
 
-            return Page();
-        }
+            var response = await httpClient.DeleteAsync($"{apiEndpoint}/api/Books/{id}");
 
-        public async Task<IActionResult> OnPostAsync(int? id)
-        {
-            if (id == null)
+            if (!response.IsSuccessStatusCode)
             {
-                return NotFound();
+                // Có thể log lỗi hoặc hiển thị thông báo tại đây nếu cần
+                return BadRequest("Failed to delete the book.");
             }
-            HttpClient httpClient = new HttpClient();
-            string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
-            var respone = await httpClient.DeleteAsync($"{api_endpoint}/api/Books/{id}");
-
 
             return RedirectToPage("./Index");
         }

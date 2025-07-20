@@ -2,80 +2,65 @@
 @model LibararyWebApplication.Pages.Librarian.RentalManagement.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Rental Management";
 }
+<link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="card shadow border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h4 class="mb-0">📚 Rental Management</h4>
+        </div>
+        <form method="get" class="row mb-3 g-2">
+            <div class="col-md-4">
+                <input type="text" name="SearchUser" class="form-control" placeholder="🔍 Search by User..." value="@Model.SearchUser" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary w-100">Search</button>
+            </div>
+        </form>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
+        <div class="card-body table-responsive">
+            <table class="table table-striped table-hover align-middle text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>Status</th>
+                        <th>Rental Date</th>
+                        <th>Due Date</th>
+                        <th>Created At</th>
+                        <th>User</th>
+                        <th>Book</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Rental)
+                    {
+                        <tr>
+                            <form method="post" asp-page-handler="UpdateStatus" class="align-middle">
+                                <input type="hidden" name="Id" value="@item.Id" />
+                            <td>
+                                <select name="Status" class="form-select form-select-sm">
+                                    <option value="Pending" selected="@("Pending" == item.Status)">Pending</option>
+                                    <option value="Approved" selected="@("Approved" == item.Status)">Approved</option>
+                                    <option value="Returned" selected="@("Returned" == item.Status)">Returned</option>
+                                </select>
+                            </td>
+                            <td>@item.RentalDate.ToString("MM/dd/yyyy")</td>
+                            <td>@item.DueDate.ToString("MM/dd/yyyy")</td>
+                            <td>@item.CreatedAt.ToString("MM/dd/yyyy")</td>
 
-            <th>
-                @Html.DisplayNameFor(model => model.Rental[0].Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rental[0].RentalDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rental[0].DueDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rental[0].CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rental[0].UpdatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rental[0].UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rental[0].BookName)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <form method="post">
-@foreach (var item in Model.Rental) {
-                <input style="display: none" name="Id" value="@item.Id">
-        <tr>
-            <td>
-                    <select name="Status">
-                        <option value="Borrowing" selected="@(item.Status == "Borrowing")">Borrowing</option>
-                        <option value="Borrowed" selected="@(item.Status == "Borrowed")">Borrowed</option>
-                        <option value="Returned" selected="@(item.Status == "Returned")">Returned</option>
-                    </select>
-
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RentalDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DueDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookName)
-            </td>
-            <td>
-                <button type="submit">Save</button> |
-
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-            }
-            </form>
-    </tbody>
-</table>
+                            <td>@item.UserName</td>
+                            <td>@item.BookName</td>
+                            <td class="d-flex justify-content-center gap-2">
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Save changes">💾</button>
+                                <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Delete rental">🗑️</a>
+                            </td>
+                            </form>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

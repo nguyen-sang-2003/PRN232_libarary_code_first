@@ -18,7 +18,7 @@ namespace LibararyWebApplication.Pages.Test
         }
 
         [BindProperty]
-        public Book Book { get; set; } = default!;
+        public Book Book { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -27,15 +27,12 @@ namespace LibararyWebApplication.Pages.Test
                 return NotFound();
             }
 
-            var book = await _context.Books.FirstOrDefaultAsync(m => m.Id == id);
+            Book = await _context.Books
+                .Include(b => b.Author).FirstOrDefaultAsync(m => m.Id == id);
 
-            if (book == null)
+            if (Book == null)
             {
                 return NotFound();
-            }
-            else
-            {
-                Book = book;
             }
             return Page();
         }
@@ -47,10 +44,10 @@ namespace LibararyWebApplication.Pages.Test
                 return NotFound();
             }
 
-            var book = await _context.Books.FindAsync(id);
-            if (book != null)
+            Book = await _context.Books.FindAsync(id);
+
+            if (Book != null)
             {
-                Book = book;
                 _context.Books.Remove(Book);
                 await _context.SaveChangesAsync();
             }

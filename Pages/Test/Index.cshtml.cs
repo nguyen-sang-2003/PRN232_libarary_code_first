@@ -17,7 +17,7 @@ namespace LibararyWebApplication.Pages.Test
             _context = context;
         }
 
-        public IList<Book> Book { get;set; } = default!;
+        public IList<Book> Book { get;set; }
 
         public async Task OnGetAsync()
         {

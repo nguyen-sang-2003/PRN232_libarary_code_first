@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +21,17 @@ namespace LibararyWebApplication.Controllers
         }
 
         // GET: api/Categories
+        //[Authorize(Roles = "staff")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        public async Task<ActionResult<IEnumerable<categoryDTO>>> GetCategories()
         {
-            return await _context.Categories.Include(s => s.Books).ToListAsync();
+            var cate = await _context.Categories.Include(s => s.Books).ToListAsync();
+            var categories = cate.Select(c => new categoryDTO
+            {
+                id = c.Id,
+                Name = c.Name
+            }).ToList();
+            return Ok(categories);
         }
 
         // GET: api/Categories/5
@@ -71,7 +79,8 @@ namespace LibararyWebApplication.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(categoryDTO category)
+        [Authorize(Roles = "staff,admin")]
+        public async Task<ActionResult<Category>> PostCategory([FromBody]categoryDTO category)
         {
             Category category1 = new Category
             {
@@ -108,7 +117,7 @@ namespace LibararyWebApplication.Controllers
 
 public class categoryDTO
 {
-
+    public int id  { get; set; }
     public string Name { get; set; }
 
 }

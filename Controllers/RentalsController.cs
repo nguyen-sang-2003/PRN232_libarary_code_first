@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LibararyWebApplication.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace LibararyWebApplication.Controllers
 
         // GET: api/Rentals
         [HttpGet]
+        [Authorize(Roles = "staff")]
         public async Task<ActionResult<List<RentalDTO>>> GetRentals()
         {
             var rental = await _context.Rentals.Include(s => s.User).Include(s => s.Book).Select(s => new RentalDTO

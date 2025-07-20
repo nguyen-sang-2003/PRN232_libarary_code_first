@@ -22,17 +22,25 @@ namespace LibararyWebApplication.Pages.Librarian.CategoriesManagement
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            HttpClient client = new HttpClient();
-            string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}"; // đổi theo địa chỉ backend bạn chạy
             if (id == null)
             {
                 return NotFound();
             }
-            var category = await client.GetFromJsonAsync<Category>($"{api_endpoint}/api/Categories/{id}");
-            Category = category;
-            return Page();
 
+            HttpClient client = new HttpClient();
+            string api_endpoint = $"http://{HttpContext.Request.Host}";
+
+            var response = await client.DeleteAsync($"{api_endpoint}/api/Categories/{id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // optional: log error or show message
+                return NotFound();
+            }
+
+            return RedirectToPage("./Index");
         }
+
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {

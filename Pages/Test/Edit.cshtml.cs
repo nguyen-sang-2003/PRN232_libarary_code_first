@@ -19,7 +19,7 @@ namespace LibararyWebApplication.Pages.Test
         }
 
         [BindProperty]
-        public Book Book { get; set; } = default!;
+        public Book Book { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,12 +28,13 @@ namespace LibararyWebApplication.Pages.Test
                 return NotFound();
             }
 
-            var book =  await _context.Books.FirstOrDefaultAsync(m => m.Id == id);
-            if (book == null)
+            Book = await _context.Books
+                .Include(b => b.Author).FirstOrDefaultAsync(m => m.Id == id);
+
+            if (Book == null)
             {
                 return NotFound();
             }
-            Book = book;
            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Id");
             return Page();
         }
@@ -42,7 +43,10 @@ namespace LibararyWebApplication.Pages.Test
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
 
             _context.Attach(Book).State = EntityState.Modified;
 

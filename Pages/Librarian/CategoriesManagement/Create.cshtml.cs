@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 
 namespace LibararyWebApplication.Pages.Librarian.CategoriesManagement
 {
@@ -28,13 +30,13 @@ namespace LibararyWebApplication.Pages.Librarian.CategoriesManagement
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            HttpClient client = new HttpClient();
+            string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
 
-            _context.Categories.Add(Category);
-            await _context.SaveChangesAsync();
+            // Serialize the Category object to JSON content
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(Category), Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"{api_endpoint}/api/Categories", jsonContent);
 
             return RedirectToPage("./Index");
         }
