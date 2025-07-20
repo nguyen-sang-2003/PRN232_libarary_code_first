@@ -1,0 +1,25 @@
+﻿@page
+@model LibararyWebApplication.Pages.RulesModel
+@{
+    ViewData["Title"] = "Library Rules";
+}
+<link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📜 @ViewData["Title"]</h2>
+
+    @foreach (var rule in Model.Rules)
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-primary fw-bold">@rule.Title</h5>
+                <div class="card-text" style="white-space: pre-line">
+                    @Html.Raw(rule.Content)
+                </div>
+                <div class="text-end mt-3 text-muted">
+                    <small>Cập nhật lần cuối: @rule.UpdatedAt.ToString("dd/MM/yyyy")</small>
+                </div>
+            </div>
+        </div>
+    }
+</div>

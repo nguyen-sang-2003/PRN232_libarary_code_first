@@ -22,7 +22,6 @@ namespace LibararyWebApplication.Pages
         {
             try
             {
-
                 string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
 
                 string current_host = HttpContext.Request.Host.ToString();
@@ -52,7 +51,8 @@ namespace LibararyWebApplication.Pages
 
                 if (string.IsNullOrEmpty(username))
                 {
-                    return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
+                    return Unauthorized();
+                    //return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
                 }
 
                 httpClient.DefaultRequestHeaders.Authorization =

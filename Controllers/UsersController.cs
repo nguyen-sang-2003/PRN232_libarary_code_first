@@ -144,7 +144,8 @@ namespace LibararyWebApplication.Controllers
             {
                 return NotFound();
             }
-            user.Active = false;
+
+            user.Active = !user.Active;
 
             _context.Entry(user).State = EntityState.Modified;
 

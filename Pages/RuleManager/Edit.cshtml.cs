@@ -94,7 +94,7 @@ namespace LibararyWebApplication.Pages.RuleManager
 
             Rule.UpdatedAt = DateTime.Now;
 
-            using var httpClient = new HttpClient();
+            //using var httpClient = new HttpClient();
 
             existing_token = Request.Headers.Authorization;
             if (existing_token == null)
@@ -120,7 +120,8 @@ namespace LibararyWebApplication.Pages.RuleManager
 
             if (string.IsNullOrEmpty(role) || role != "admin")
             {
-                return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
+                return Unauthorized();
+                //return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
             }
 
             httpClient.DefaultRequestHeaders.Authorization =

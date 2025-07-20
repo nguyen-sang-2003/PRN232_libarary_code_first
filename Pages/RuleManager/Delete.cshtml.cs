@@ -92,7 +92,7 @@ namespace LibararyWebApplication.Pages.RuleManager
                 return NotFound();
             }
 
-            using var httpClient = new HttpClient();
+            //using var httpClient = new HttpClient();
             var response = await httpClient.DeleteAsync($"{ApiBase}/{id}");
 
             if (!response.IsSuccessStatusCode)

@@ -33,9 +33,6 @@
                     <dt class="col-sm-3">📅 Rental Date:</dt>
                     <dd class="col-sm-9">@Model.Detail.RentailDate.ToString("dd/MM/yyyy")</dd>
 
-                    <dt class="col-sm-3">📆 Due Date:</dt>
-                    <dd class="col-sm-9">@Model.Detail.DueDate.ToString("dd/MM/yyyy")</dd>
-
                     <dt class="col-sm-3">📦 Book Condition:</dt>
                     <dd class="col-sm-9">@Model.Detail.BookCondition</dd>
 
@@ -46,7 +43,7 @@
                     <dd class="col-sm-9">@Model.Detail.RenewCount</dd>
 
                     <dt class="col-sm-3">📆 Final Return Date:</dt>
-                    <dd class="col-sm-9">@Model.Detail.DueDate.AddDays(3 * Model.Detail.RenewCount).ToString("dd/MM/yyyy")</dd>
+                    <dd class="col-sm-9">@Model.Detail.DueDate.ToString("dd/MM/yyyy")</dd>
                 </dl>
             }
             else
