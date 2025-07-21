@@ -6,6 +6,11 @@ namespace LibararyWebApplication.Pages
 {
     public class ResetPassword : PageModel
     {
+        public readonly HttpClient client;
+        public ResetPassword(HttpClient client)
+        {
+            this.client = client;
+        }
         public string? ErrorMessage { get; set; }
         public bool IsValidToken = false;
         public string ResetPasswordToken { get; set; } = string.Empty;
@@ -19,7 +24,6 @@ namespace LibararyWebApplication.Pages
             }
             else
             {
-                HttpClient client = new HttpClient();
                 // get the base address from current host
                 // string encodedToken = Uri.EscapeDataString(token);
                 string api_endpoint = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/users/check_password_reset_token";

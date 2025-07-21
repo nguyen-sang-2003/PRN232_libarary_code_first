@@ -187,12 +187,54 @@ namespace LibararyWebApplication.Controllers
             return Ok(userInfo);
         }
 
+        public class change_password_dto
+        {
+            public string username { get; set; }
+            public string old_password { get; set; }
+            public string new_password { get; set; }
+        }
 
         [HttpPost("/api/users/changepassword")]
         [Authorize]
-        public IActionResult ChangePassword()
+        public IActionResult ChangePassword([FromBody] change_password_dto in_obj)
         {
-            return NotFound("TODO");
+            var user_from_jwt = HttpContext.User;
+            if (user_from_jwt?.Identity == null || !user_from_jwt.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+            var username_from_jwt = user_from_jwt.Identity.Name;
+
+            var user = ctx.Users.ToList().Where(u => u.Username.Equals(in_obj.username)).FirstOrDefault();
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    message = "no user"
+                });
+            }
+
+            if (!user.Username.Equals(username_from_jwt))
+            {
+                return Unauthorized();
+            }
+
+            if (user.Password.Equals(in_obj.old_password))
+            {
+                user.Password = in_obj.new_password;
+                ctx.Users.Update(user);
+                ctx.SaveChanges();
+
+                return Ok(new
+                {
+                    message = "password changed"
+                });
+            }
+
+            return BadRequest(new
+            {
+                message = "invalid credential"
+            });
         }
 
         public static bool is_reset_token_still_valid(User? user)

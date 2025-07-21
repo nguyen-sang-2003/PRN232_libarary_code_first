@@ -1,70 +1,234 @@
 @page "/book/{id:int}"
 @using LibararyWebApplication.DTO
 @model LibararyWebApplication.Pages.cuong.BookDetailModel
+
 @{
+    BookDto book = Model.book;
 }
+
+<!-- Styles -->
+<style>
+
+    .text-logo {
+        font-size: 24px; /* hoặc cỡ phù hợp với giao diện */
+        font-weight: bold;
+        color: White; /* chỉnh màu tùy ý */
+        font-family: 'Arial', sans-serif; /* chọn font bạn muốn */
+        text-transform: uppercase; /* nếu cần chữ in hoa */
+        padding: 10px 0;
+    }
+
+    .custom-back-button {
+        padding: 10px 30px;
+        border-radius: 50px;
+        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .custom-back-button:hover {
+            background-color: #0d6efd;
+            color: #fff;
+            border-color: #0d6efd;
+        }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-toggle img {
+        width: 24px;
+        cursor: pointer;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: fixed;
+        top: 60px;
+        right: 140px;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        width: 100px;
+        z-index: 999;
+        border-radius: 4px;
+        padding: 5px 0;
+        font-size: 13px;
+        color: #333;
+    }
+
+        .dropdown-menu.show {
+            margin-left: 44rem;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            color: #333 !important;
+            text-decoration: none;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+            .dropdown-menu a:hover {
+                background-color: #f5f5f5;
+            }
+
+    .show {
+        display: block;
+    }
+</style>
+
+<!-- External Stylesheets -->
 <link rel="stylesheet" href="/bootstrap/bootstrap.min.css" />
 <link rel="stylesheet" href="/app.css" />
 <link rel="stylesheet" href="/LibararyWebApplication.styles.css" />
 <link rel="icon" type="image/png" href="favicon.png" />
+<link rel="stylesheet" href="/TemplateLibraryHomePage/css/bootstrap.min.css">
+<link rel="stylesheet" href="/TemplateLibraryHomePage/css/style.css">
+<link rel="stylesheet" href="/TemplateLibraryHomePage/css/responsive.css">
+<link rel="icon" href="/TemplateLibraryHomePage/images/fevicon.png" type="image/gif" />
+<link rel="stylesheet" href="/TemplateLibraryHomePage/css/jquery.mCustomScrollbar.min.css">
 
-<h3>Book Details</h3>
-@{
-	BookDto book = Model.book;
+<!-- Header -->
+<header>
+    <div class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                    <div class="full">
+                        <div class="center-desk">
+                            <div class="logo">
+                                <a href="index.html">
+                                    <div class="text-logo">Memories Library</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                    <div class="menu-area">
+                        <div class="limit-box">
+                            <nav class="main-menu">
+                                <ul class="menu-area-main">
+                                    <li class="active"> <a href="/">Home</a> </li>
+                                    <li><a href="#">About us</a></li>
+                                    <li><a href="#">Our Books</a></li>
+                                    <li><a href="#">Library</a></li>
+                                    <li><a href="#">Contact us</a></li>
+                                    <li class="mean-last dropdown">
+                                        <a href="#" class="dropdown-toggle">
+                                            <img src="/TemplateLibraryHomePage/images/top-icon.png" alt="#" />
+                                        </a>
+                                        <div class="dropdown-menu" id="dropdownMenu">
+                                            <a href="/profile">👤 Profile</a>
+                                            <a href="/settings">⚙️ Settings</a>
+                                            <a href="/logout">🚪 Logout</a>
+                                        </div>
+                                    </li>
+                                    <li><a href="#">Login</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 
-	if (book == null)
-	{
-		<div class="d-flex justify-content-center my-5">
-			<div class="spinner-border text-primary" role="status">
-				<span class="visually-hidden">Loading...</span>
-			</div>
-		</div>
-	}
-	else
-	{
-		<div class="container my-5">
-			<div class="card shadow border-0">
-				<div class="row g-0 align-items-center">
-					<div class="col-md-4 text-center p-4">
-						<img src="@book.ImageBase64"
-							 class="img-fluid rounded shadow-sm"
-							 alt="@book.Title"
-							 style="max-height: 300px; object-fit: contain;" />
-					</div>
-					<div class="col-md-8">
-						<div class="card-body px-4">
-							<h3 class="card-title fw-bold text-danger">@book.Title</h3>
-							<p class="card-text fs-5 mb-1">
-								<strong>Author:</strong> @book.AuthorName
-							</p>
-							<p class="card-text fs-5 mb-1">
-								<strong>Published:</strong> @book.PublishedDate.ToShortDateString()
-							</p>
-							<p class="card-text fs-5 mb-1">
-								<strong>Total Copies:</strong> @book.TotalCopies
-							</p>
-							<p class="card-text fs-5 mb-3">
-								<strong>Available Copies:</strong> @book.AvailableCopies
-							</p>
-							<button id="borrowBtn" data-bookid="@book.Id" class="btn btn-outline-success btn-lg mt-2">
-								&larr; Borrowing
-							</button>
-                            <!--
-							<a href="/borrowing-history" class="btn btn-outline-info btn-lg mt-2">
-								📚 Lịch sử mượn sách
-							</a>
-                            -->
-							<button class="btn btn-outline-primary btn-lg mt-2" onclick="goBack()">← Back to Books</button>
-
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	}
-
+<!-- Main Content -->
+@if (book == null)
+{
+    <div class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 }
-<script src="/TemplateLibraryHomePage/js/jquery.min.js"></script>
+else
+{
+    <div class="container my-5">
+        <div class="card border-0" style="margin-top: 140px; border: 2px solid black; box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);">
+            <div class="row g-0 align-items-center">
+                <div class="col-md-4 text-center p-4" style="margin-top: 44px;">
+                    <img src="@book.ImageBase64" class="img-fluid rounded shadow-sm" alt="@book.Title" style="max-height: 300px; object-fit: contain;" />
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body px-4">
+                        <h3 class="card-title fw-bold text-danger" style="font-size: 40px;">@book.Title</h3>
+                        <p class="card-text fs-5 mb-1">
+                            <strong style="font-weight: 550;">Author:</strong> @book.AuthorName
+                        </p>
+                        <p class="card-text fs-5 mb-1">
+                            <strong style="font-weight: 550;">Published:</strong> @book.PublishedDate.ToShortDateString()
+                        </p>
+                        <p class="card-text fs-5 mb-1">
+                            <strong style="font-weight: 550;">Total Copies:</strong> @book.TotalCopies
+                        </p>
+                        <p class="card-text fs-5 mb-3">
+                            <strong style="font-weight: 550;">Available Copies:</strong> @book.AvailableCopies
+                        </p>
+                        <button id="borrowBtn" data-bookid="@book.Id" class="btn btn-outline-success btn-lg mt-2">
+                            Borrow
+                        </button>
+                        <a href="/"><button type="submit" class="btn btn-outline-primary btn-lg mt-2 custom-back-button">
+                            ← Back to Books
+                        </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Footer -->
+<footer>
+    <div class="footer" style="padding-bottom: 35px;">
+        <div class="container">
+            <div class="row pdn-top-30">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                    <div class="Follow">
+                        <h3>Follow Us</h3>
+                    </div>
+                    <ul class="location_icon">
+                        <li><a href="#"><img src="/TemplateLibraryHomePage/icon/facebook.png"></a></li>
+                        <li><a href="#"><img src="/TemplateLibraryHomePage/icon/Twitter.png"></a></li>
+                        <li><a href="#"><img src="/TemplateLibraryHomePage/icon/linkedin.png"></a></li>
+                        <li><a href="#"><img src="/TemplateLibraryHomePage/icon/instagram.png"></a></li>
+                    </ul>
+                </div>
+                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                    <div class="Follow">
+                        <h3>Newsletter</h3>
+                    </div>
+                    <input class="Newsletter" placeholder="Enter your email" type="email">
+                    <button class="Subscribe">Subscribe</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script>
+    const toggleBtn = document.querySelector('.dropdown-toggle');
+    const menu = document.getElementById('dropdownMenu');
+
+    toggleBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        menu.classList.toggle('show');
+    });
+
+    window.addEventListener('click', function (e) {
+        if (!e.target.closest('.dropdown')) {
+            menu.classList.remove('show');
+        }
+    });
+</script>
 <script>
     // Function để lấy token từ localStorage hoặc cookie
     function getCurrentToken() {

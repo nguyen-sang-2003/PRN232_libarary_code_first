@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static PrnContext;
 
 namespace LibararyWebApplication.Controllers
 {
@@ -52,11 +53,11 @@ namespace LibararyWebApplication.Controllers
                 DueDate = DateTime.Now.AddDays(7),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                Status = "borrowed",
+                Status = RentalStatus.Pending,
                 RenewCount = 0
             };
 
-            availableCopy.Status = "unavailable";
+            availableCopy.Status = BookCopyStatus.Unavailable;
 
             _context.Rentals.Add(rental);
             _context.SaveChanges();
