@@ -19,7 +19,7 @@ namespace LibararyWebApplication.Pages
                 return Redirect($"/login?return_url={System.Web.HttpUtility.UrlEncode(HttpContext.Request.Path)}");
             }
 
-            var user = Utils.get_user_from_token(existing_token, client);
+            //var user = Utils.get_user_from_token(existing_token, client);
             string request_url = $"{Request.Scheme}://{Request.Host}/api/users/fromtoken";
             return Page();
         }

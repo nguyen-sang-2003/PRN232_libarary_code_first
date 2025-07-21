@@ -1,4 +1,5 @@
 @page "/borrowing-history"
+@using static PrnContext
 @model LibararyWebApplication.Pages.Student.BorrowingHistoryModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -321,7 +322,7 @@
                         @for (int i = 0; i < Model.Borrowings.Count; i++)
                         {
                             var item = Model.Borrowings[i];
-                            var isOverdue = item.DueDate < DateTime.Now && item.Status == "borrowed";
+                            var isOverdue = item.DueDate < DateTime.Now && item.Status == RentalStatus.Pending;
                             var rowClass = isOverdue ? "overdue-row" : "";
 
                             <tr class="@rowClass">
@@ -342,7 +343,7 @@
                                     }
                                 </td>
                                 <td>
-                                    @if (item.Status == "borrowed")
+                                    @if (item.Status == RentalStatus.Pending)
                                     {
                                         <span class="status-badge status-borrowed">
                                             <i class="fas fa-book-open me-1"></i>Đang mượn
@@ -386,7 +387,7 @@
                             <span class="stats-label">
                                 <i class="fas fa-book-open me-2"></i>Borrowed Book
                             </span>
-                            <span class="stats-value">@Model.Borrowings.Count(b => b.Status == "borrowed")</span>
+                            <span class="stats-value">@Model.Borrowings.Count(b => b.Status == RentalStatus.Pending)</span>
                         </div>
                         <div class="stats-item">
                             <span class="stats-label">
@@ -398,7 +399,7 @@
                             <span class="stats-label">
                                 <i class="fas fa-exclamation-triangle me-2"></i>Overdue
                             </span>
-                            <span class="stats-value">@Model.Borrowings.Count(b => b.DueDate < DateTime.Now && b.Status == "borrowed")</span>
+                            <span class="stats-value">@Model.Borrowings.Count(b => b.DueDate < DateTime.Now && b.Status == RentalStatus.Pending)</span>
                         </div>
                     </div>
                 </div>
