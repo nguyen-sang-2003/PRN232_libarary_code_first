@@ -151,9 +151,9 @@ public class PrnContext : DbContext
         modelBuilder.Entity<Book>(entity =>
         {
             entity.HasData(
-                        new Book { Id = 1, Title = "1984", AuthorId = 1, PublishedDate = new DateTime(1949, 6, 8), ImageBase64 = "" },
-                        new Book { Id = 2, Title = "To Kill a Mockingbird", AuthorId = 2, PublishedDate = new DateTime(1960, 7, 11), ImageBase64 = "" },
-                        new Book { Id = 3, Title = "The Great Gatsby", AuthorId = 3, PublishedDate = new DateTime(1925, 4, 10), ImageBase64 = "" }
+                        new Book { Id = 1, Title = "1984", AuthorId = 1, PublishedDate = new DateTime(1949, 6, 8), ImageBase64 = "https://bizweb.dktcdn.net/100/326/228/products/1984-by-george-orwell-bookworm-hanoi-038adcb4-d1cc-49ee-85eb-50f188229ecf.jpg" },
+                        new Book { Id = 2, Title = "To Kill a Mockingbird", AuthorId = 2, PublishedDate = new DateTime(1960, 7, 11), ImageBase64 = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg/1200px-To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg" },
+                        new Book { Id = 3, Title = "The Great Gatsby", AuthorId = 3, PublishedDate = new DateTime(1925, 4, 10), ImageBase64 = "https://upload.wikimedia.org/wikipedia/commons/7/7a/The_Great_Gatsby_Cover_1925_Retouched.jpg" }
                     );
 
 
@@ -227,5 +227,10 @@ public class PrnContext : DbContext
         public const string Pending = "Pending";
         public const string Approved = "Approved";
         public const string Returned = "Returned";
+    }
+
+    public static class BookCopyStatus{
+        public const string Available = "Available";
+        public const string Unavailable = "Unavailable";
     }
 }
