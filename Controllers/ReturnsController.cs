@@ -18,26 +18,37 @@ namespace LibararyWebApplication.Controllers
         [HttpGet("rental-detail")]
         public async Task<ActionResult<DetailRentail>> Get(int rentailId)
         {
-            var result = await _context.Returns
-                .Include(rt=>rt.Rental)
-                .ThenInclude(re=>re.Book)
-                .ThenInclude(bc=>bc.Book)
-                .FirstOrDefaultAsync(rt=>rt.RentalId==rentailId);
-            if (result == null) return NotFound();
-            var dto = new DetailRentail
+            //var result = await _context.Returns
+            //    .Include(rt=>rt.Rental)
+            //    .ThenInclude(re=>re.Book)
+            //    .ThenInclude(bc=>bc.Book)
+            //    .FirstOrDefaultAsync(rt=>rt.RentalId==rentailId);
+            //if (result == null) return NotFound();
+            //var dto = new DetailRentail
+            //{
+            //    RentalId = result.RentalId,
+            //    Title = result.Rental.Book.Book.Title,
+            //    ImageBase64 = result.Rental.Book.Book.ImageBase64,
+            //    RenewCount = result.Rental.RenewCount,
+            //    RentailDate = result.Rental.RentalDate,
+            //    DueDate = result.Rental.DueDate,
+            //    BookCondition = result.Rental.Book.Condition,
+            //    Status = result.Rental.Status
+            //};
+            var re = await _context.Rentals.Include(r=>r.Book).ThenInclude(bc => bc.Book).FirstOrDefaultAsync(r => r.Id == rentailId);
+            if(re == null) return NotFound();
+            var DTO = new DetailRentail
             {
-                RentalId = result.RentalId,
-                ReturnId = result.Id,
-                BookCopyId = result.Rental.BookCopyId,
-                Title = result.Rental.Book.Book.Title,
-                ImageBase64 = result.Rental.Book.Book.ImageBase64,
-                RenewCount = result.Rental.RenewCount,
-                RentailDate = result.Rental.RentalDate,
-                DueDate = result.Rental.DueDate,
-                BookCondition = result.Rental.Book.Condition,
-                Status = result.Rental.Status
+                RentalId = re.Id,
+                Title = re.Book.Book.Title,
+                ImageBase64 = re.Book.Book.ImageBase64,
+                RenewCount = re.RenewCount,
+                RentailDate = re.RentalDate,
+                DueDate = re.DueDate,
+                BookCondition = re.Book.Condition,
+                Status = re.Status
             };
-            return dto;
+            return DTO;
         }
     }
 }
