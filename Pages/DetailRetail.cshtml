@@ -6,6 +6,31 @@
 }
 
 <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="/TemplateLibraryHomePage/css/font-awesome.min.css" />
+<style>
+    .btn-outline-secondary {
+        min-width: 100px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: background 0.2s, color 0.2s;
+    }
+    .btn-outline-secondary:hover {
+        background: #6c757d;
+        color: #fff;
+    }
+    .btn-custom-sameheight {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1.1rem;
+        padding-left: 24px;
+        padding-right: 24px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+</style>
+
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-warning">
@@ -56,8 +81,13 @@
             <div class="card-footer mt-4 d-flex gap-3">
                 <form method="post" asp-page-handler="Renew" onsubmit="return confirm('Confirm book renewal?')">
                     <input type="hidden" name="RentalId" value="@Model.Detail.RentalId" />
-                    <button type="submit" class="btn btn-warning">🔁 Renew Book</button>
+                    <button type="submit" class="btn btn-warning btn-custom-sameheight">
+                        <i class="fa fa-refresh me-2"></i>Renew Book
+                    </button>
                 </form>
+                <a href="javascript:history.back()" class="btn btn-custom-sameheight text-white" style="background-color: #00cfff; border-color: #00cfff;">
+                    <i class="fa fa-arrow-left me-2"></i>Back
+                </a>
             </div>
         }
     </div>

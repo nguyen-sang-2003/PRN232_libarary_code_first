@@ -227,6 +227,7 @@ public class PrnContext : DbContext
         public const string Pending = "Pending";
         public const string Approved = "Approved";
         public const string Returned = "Returned";
+        public const string Cancelled = "Cancelled";
     }
 
     public static class BookCopyStatus{

@@ -22,6 +22,10 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
             _context = context;
             this.client = client;
         }
+        [BindProperty]
+        public int NumberOfCopies { get; set; } = 0;
+
+        public int CurrentCopies { get; set; } = 0;
 
         [BindProperty]
         public Book Book { get; set; } = default!;
@@ -99,12 +103,32 @@ namespace LibararyWebApplication.Pages.Librarian.BookManagement
             using HttpClient client = new HttpClient();
             string api_endpoint = $"http://{HttpContext.Request.Host}";
 
+            // Gọi API cập nhật thông tin sách
             var response = await client.PutAsJsonAsync($"{api_endpoint}/api/Books/{Book.Id}", bookDto);
 
             if (response.IsSuccessStatusCode)
             {
+                // ➕ Thêm copies mới nếu cần
+                if (NumberOfCopies > 0)
+                {
+                    for (int i = 0; i < NumberOfCopies; i++)
+                    {
+                        var copy = new BookCopy
+                        {
+                            BookId = Book.Id,
+                            Status = "available",
+                            Condition = "new",
+                            CreatedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now
+                        };
+                        _context.BookCopies.Add(copy);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToPage("./Index");
             }
+
 
             ModelState.AddModelError(string.Empty, "Lỗi khi cập nhật sách.");
 

@@ -93,6 +93,7 @@ namespace LibararyWebApplication.Controllers
         }
 
         // DELETE: api/Categories/5
+        [Authorize(Roles = "staff")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

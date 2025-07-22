@@ -283,9 +283,9 @@
         <div class="main-container">
             <div class="page-header">
                 <h1 class="page-title">
-                    <i class="fas fa-history"></i> Lịch sử mượn sách
+                    <i class="fas fa-history"></i> Borrowing History
                 </h1>
-                <p class="page-subtitle">Theo dõi các sách bạn đã mượn từ thư viện</p>
+                <p class="page-subtitle">Track the books you have borrowed from the library</p>
             </div>
 
     @if (Model.Message != null)
@@ -297,7 +297,7 @@
         {
             <div class="text-center mt-3">
                 <a href="/login?return_url=@System.Web.HttpUtility.UrlEncode("/borrowing-history")" class="btn btn-primary-custom btn-custom">
-                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập ngay
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
                 </a>
             </div>
         }
@@ -310,12 +310,12 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th><i class="fas fa-hashtag me-2"></i>STT</th>
-                            <th><i class="fas fa-book me-2"></i>Tên sách</th>
-                            <th><i class="fas fa-calendar-plus me-2"></i>Ngày mượn</th>
-                            <th><i class="fas fa-calendar-check me-2"></i>Hạn trả</th>
-                            <th><i class="fas fa-info-circle me-2"></i>Trạng thái</th>
-                            <th><i class="fas fa-sync-alt me-2"></i>Số lần gia hạn</th>
+                            <th><i class="fas fa-hashtag me-2"></i>No.</th>
+                            <th><i class="fas fa-book me-2"></i>Book Title</th>
+                            <th><i class="fas fa-calendar-plus me-2"></i>Borrow Date</th>
+                            <th><i class="fas fa-calendar-check me-2"></i>Due Date</th>
+                            <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                            <th><i class="fas fa-cogs me-2"></i>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -334,7 +334,7 @@
                                     {
                                         <span class="overdue-text">
                                             <i class="fas fa-exclamation-triangle me-1"></i>
-                                            @item.DueDate.ToString("dd/MM/yyyy") (Quá hạn)
+                                            @item.DueDate.ToString("dd/MM/yyyy") (Overdue)
                                         </span>
                                     }
                                     else
@@ -345,22 +345,47 @@
                                 <td>
                                     @if (item.Status == RentalStatus.Pending)
                                     {
-                                        <span class="status-badge status-borrowed">
-                                            <i class="fas fa-book-open me-1"></i>Đang mượn
+                                        <span class="status-badge status-pending">
+                                            <i class="fas fa-hourglass-half me-1"></i>Pending
                                         </span>
                                     }
-                                    else if (item.Status == "returned")
+                                    else if (item.Status == RentalStatus.Approved)
+                                    {
+                                        <span class="status-badge status-borrowed">
+                                            <i class="fas fa-book-open me-1"></i>Borrowed
+                                        </span>
+                                    }
+                                    else if (item.Status == RentalStatus.Returned)
                                     {
                                         <span class="status-badge status-returned">
-                                            <i class="fas fa-check-circle me-1"></i>Đã trả
+                                            <i class="fas fa-check-circle me-1"></i>Returned
+                                        </span>
+                                    }
+                                    else if (item.Status == RentalStatus.Cancelled)
+                                    {
+                                        <span class="status-badge status-cancelled">
+                                            <i class="fas fa-times-circle me-1"></i>Cancelled
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="status-badge status-overdue">@item.Status</span>
+                                        <span class="status-badge status-unknown">@item.Status</span>
                                     }
                                 </td>
-                                <td><span class="renew-count">@item.RenewCount lần</span></td>
+                                <td>
+                                    @if (item.Status == RentalStatus.Pending)
+                                    {
+                                        <button class="btn btn-danger btn-sm cancel-btn" data-rentalid="@item.Id">
+                                            <i class="fas fa-times me-1"></i>Cancel
+                                        </button>
+                                    }
+                                    else if (item.Status == RentalStatus.Approved)
+                                    {
+                                        <a href="/DetailRetail/@item.Id" class="btn btn-warning btn-sm renew-btn">
+                                            <i class="fas fa-sync-alt me-1"></i> Renew
+                                        </a>
+                                    }
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -373,7 +398,7 @@
                 <div class="card stats-card">
                     <div class="card-header">
                         <h5 class="mb-0">
-                            <i class="fas fa-chart-bar me-2"></i>Thống kê mượn sách
+                            <i class="fas fa-chart-bar me-2"></i>Borrowing Statistics
                         </h5>
                     </div>
                     <div class="card-body">
@@ -410,11 +435,11 @@
     {
         <div class="empty-state">
             <i class="fas fa-book-open"></i>
-            <h4>Chưa có lịch sử mượn sách</h4>
-            <p>Bạn chưa mượn sách nào từ thư viện. Hãy bắt đầu khám phá bộ sưu tập sách của chúng tôi!</p>
+            <h4>No borrowing history</h4>
+            <p>You have not borrowed any books from the library yet. Start exploring our book collection!</p>
             <div class="action-buttons">
                 <a href="/" class="btn btn-primary-custom btn-custom">
-                    <i class="fas fa-book me-2"></i>Borrowing Book
+                    <i class="fas fa-book me-2"></i>Borrow Book
                 </a>
             </div>
         </div>
@@ -425,9 +450,40 @@
             <i class="fas fa-home me-2"></i>Home
         </a>
         <a href="javascript:history.back()" class="btn btn-back btn-custom">
-            <i class="fas fa-arrow-left me-2"></i>Return
+            <i class="fas fa-arrow-left me-2"></i>Back
         </a>
     </div>
         </div>
     </div>
 </div>
+
+<!-- Add AJAX for Cancel button only -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Cancel rental
+    $('.cancel-btn').click(function() {
+        const rentalId = $(this).data('rentalid');
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert('You need to log in!');
+            window.location.href = '/login?return_url=' + encodeURIComponent(window.location.pathname);
+            return;
+        }
+        if (!confirm('Are you sure you want to cancel this rental?')) return;
+
+        $.ajax({
+            url: '/api/borrowing/rentals/cancel/' + rentalId,
+            type: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            success: function(res) {
+                alert('Rental cancelled successfully!');
+                location.reload();
+            },
+            error: function(xhr) {
+                alert('Failed to cancel: ' + (xhr.responseText || 'An error occurred'));
+            }
+        });
+    });
+});
+</script>

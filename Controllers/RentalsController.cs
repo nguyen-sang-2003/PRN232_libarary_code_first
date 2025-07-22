@@ -57,11 +57,13 @@ namespace LibararyWebApplication.Controllers
 
         // PUT: api/Rentals/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "staff")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRental(int id, String Status)
+        public async Task<IActionResult> PutRental(int id, String Status,[FromBody]int CopyId)
         {
-            var rental = _context.Rentals.FirstOrDefault(s => s.Id == id);
+            var rental = _context.Rentals.Include(s => s.Book).FirstOrDefault(s => s.Id == id);
             rental.Status = Status;
+             rental.Book.Status = "available";
 
             _context.Entry(rental).State = EntityState.Modified;
 
