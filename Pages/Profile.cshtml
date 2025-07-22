@@ -21,7 +21,7 @@
                     <a href="#" class="list-group-item list-group-item-action">
                         🔒 Change Password
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action">
+                    <a href="/borrowing-history" class="list-group-item list-group-item-action">
                         📚 Borrowed Books
                     </a>
                 </div>
@@ -79,6 +79,20 @@
                     </div>
                 </div>
             </div>
+        }
+        else if(Model.User.Role == "staff")
+        {
+            // redirect to staff profile page
+            <script>
+                window.location.href = "/Librarian/BookManagement";
+            </script>
+        }
+        else if(Model.User.Role == "admin")
+        {
+            // redirect to staff profile page
+            <script>
+                window.location.href = "/useradmin";
+            </script>
         }
         else
         {
