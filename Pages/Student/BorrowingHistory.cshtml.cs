@@ -20,6 +20,7 @@ namespace LibararyWebApplication.Pages.Student
 
         public class BorrowingHistoryItem
         {
+            public int Id { get; set; } // RentalId
             public string BookTitle { get; set; } = "";
             public DateTime RentalDate { get; set; }
             public DateTime DueDate { get; set; }

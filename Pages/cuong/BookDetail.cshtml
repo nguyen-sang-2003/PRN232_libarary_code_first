@@ -101,7 +101,7 @@
                     <div class="full">
                         <div class="center-desk">
                             <div class="logo">
-                                <a href="index.html">
+                                <a href="/">
                                     <div class="text-logo">Memories Library</div>
                                 </a>
                             </div>
@@ -172,7 +172,7 @@ else
                             <strong style="font-weight: 550;">Available Copies:</strong> @book.AvailableCopies
                         </p>
                         <button id="borrowBtn" data-bookid="@book.Id" class="btn btn-outline-success btn-lg mt-2">
-                            Borrow
+                            &larr; Borrowing
                         </button>
                         <a href="/"><button type="submit" class="btn btn-outline-primary btn-lg mt-2 custom-back-button">
                             ← Back to Books
@@ -214,6 +214,7 @@ else
 </footer>
 
 <!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     const toggleBtn = document.querySelector('.dropdown-toggle');
     const menu = document.getElementById('dropdownMenu');
@@ -248,7 +249,7 @@ else
     }
 
     // Xử lý sự kiện click nút mượn sách
-    $('#borrowBtn').click(function() {
+    $('#borrowBtn').click(function () {
         var bookId = $(this).data('bookid');
 
         // Lấy token hiện tại
@@ -274,12 +275,12 @@ else
                 'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json'
             },
-            success: function(response) {
+            success: function (response) {
                 console.log('Borrow success:', response);
                 alert('Mượn sách thành công!\nUser: ' + response.username + '\nBook ID: ' + response.bookId);
                 window.location.href = '/'; // Chuyển về trang chủ
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 // Re-enable nút
                 $('#borrowBtn').prop('disabled', false).text('← Borrowing');
 
@@ -300,3 +301,5 @@ else
         window.location.href = '/';
     }
 </script>
+
+

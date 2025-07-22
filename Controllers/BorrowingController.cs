@@ -70,6 +70,77 @@ namespace LibararyWebApplication.Controllers
             });
         }
 
+        [Authorize(Roles = "user")]
+        [HttpPost("rentals/cancel/{rentalId}")]
+        public IActionResult CancelRental(int rentalId)
+        {
+            var user = HttpContext.User;
+            string username = user.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(username))
+                return Unauthorized("Username not found in token");
+
+            var user_obj = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user_obj == null)
+                return Unauthorized($"User '{username}' not found in database");
+
+            var rental = _context.Rentals
+                .Include(r => r.Book)
+                .FirstOrDefault(r => r.Id == rentalId && r.UserId == user_obj.Id);
+
+            if (rental == null)
+                return NotFound("Rental not found.");
+
+            if (rental.Status != RentalStatus.Pending)
+                return BadRequest("Only pending rentals can be cancelled.");
+
+            // Trả lại trạng thái available cho BookCopy
+            var bookCopy = _context.BookCopies.FirstOrDefault(bc => bc.Id == rental.BookCopyId);
+            if (bookCopy != null)
+                bookCopy.Status = BookCopyStatus.Available;
+
+            // Đổi status thành Cancelled
+            rental.Status = RentalStatus.Cancelled;
+            rental.UpdatedAt = DateTime.Now;
+
+            _context.SaveChanges();
+
+            return Ok(new { message = "Rental cancelled and book copy is now available." });
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpPost("rentals/renew/{rentalId}")]
+        public IActionResult RenewRental(int rentalId)
+        {
+            var user = HttpContext.User;
+            string username = user.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(username))
+                return Unauthorized("Username not found in token");
+
+            var user_obj = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user_obj == null)
+                return Unauthorized($"User '{username}' not found in database");
+
+            var rental = _context.Rentals.FirstOrDefault(r => r.Id == rentalId && r.UserId == user_obj.Id);
+            if (rental == null)
+                return NotFound("Rental not found.");
+
+            if (rental.Status != RentalStatus.Approved)
+                return BadRequest("Only approved rentals can be renewed.");
+
+            // Optional: Check renew limit
+            int maxRenew = 4;
+            if (rental.RenewCount >= maxRenew)
+                return BadRequest("Renewal limit reached.");
+
+            // Extend due date (e.g., +7 days)
+            rental.DueDate = rental.DueDate.AddDays(7);
+            rental.RenewCount += 1;
+            rental.UpdatedAt = DateTime.Now;
+
+            _context.SaveChanges();
+
+            return Ok(new { message = "Rental renewed successfully!", newDueDate = rental.DueDate });
+        }
 
 
         [HttpGet("history/user/{userId}")]
@@ -116,6 +187,7 @@ namespace LibararyWebApplication.Controllers
                 .ThenInclude(bc => bc.Book)
                 .Select(r => new
                 {
+                    Id = r.Id, // Bổ sung trường Id
                     BookTitle = r.Book.Book.Title,
                     RentalDate = r.RentalDate,
                     DueDate = r.DueDate,
