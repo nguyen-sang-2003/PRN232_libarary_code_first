@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,7 +41,7 @@ namespace LibararyWebApplication.Controllers
                     ImageBase64 = b.ImageBase64,
                     AuthorId = b.AuthorId,
                     AuthorName = b.Author.Name,
-                    TotalCopies = b.BookCopies.Count,
+                    TotalCopies = b.BookCopies.Where(s => s.Status == "available").ToList().Count,
                     categories = b.Categories.Select(c => new Category
                     {
                         Id = c.Id,
@@ -75,9 +76,9 @@ namespace LibararyWebApplication.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBook(int id, BookDTO book)
         {
-            // Tìm entity sách + load luôn các Category
             var bookEntity = await _context.Books
                 .Include(b => b.Categories)
+                .Include(b => b.BookCopies) // Include bản sao để tính số lượng
                 .FirstOrDefaultAsync(b => b.Id == id);
 
             if (bookEntity == null)
@@ -91,16 +92,32 @@ namespace LibararyWebApplication.Controllers
             bookEntity.ImageBase64 = book.Image;
             bookEntity.PublishedDate = book.PublicDate;
 
-            // Cập nhật quan hệ Category (many-to-many)
+            // Cập nhật Categories
             var newCategories = await _context.Categories
                 .Where(c => book.CategoryIds.Contains(c.Id))
                 .ToListAsync();
 
-            // Cập nhật đúng cách: xóa hết cũ rồi add lại
-            bookEntity.Categories.Clear();         // Xóa quan hệ cũ
-            foreach (var cat in newCategories)     // Thêm mới
+            bookEntity.Categories.Clear();
+            foreach (var cat in newCategories)
             {
                 bookEntity.Categories.Add(cat);
+            }
+
+            // ➕ Thêm số lượng bản sao mới nếu có
+            if (book.NumberOfCopies > 0)
+            {
+                for (int i = 0; i < book.NumberOfCopies; i++)
+                {
+                    var newCopy = new BookCopy
+                    {
+                        BookId = bookEntity.Id,
+                        Status = "available",
+                        Condition = "new",
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    _context.BookCopies.Add(newCopy);
+                }
             }
 
             try
@@ -134,15 +151,29 @@ namespace LibararyWebApplication.Controllers
                 Title = dto.Name,
                 AuthorId = dto.AuthorId,
                 ImageBase64 = dto.Image,
-                PublishedDate = dto.PublicDate
+                PublishedDate = dto.PublicDate,
+                BookCopies = new List<BookCopy>()
             };
 
+            // Gán categories
             if (dto.CategoryIds != null && dto.CategoryIds.Any())
             {
                 var categories = await _context.Categories
                     .Where(c => dto.CategoryIds.Contains(c.Id))
                     .ToListAsync();
                 book.Categories = categories;
+            }
+
+            // Tạo các bản sao sách (BookCopy)
+            for (int i = 0; i < dto.NumberOfCopies; i++)
+            {
+                book.BookCopies.Add(new BookCopy
+                {
+                    Status = "available",
+                    Condition = "new",
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                });
             }
 
             _context.Books.Add(book);
@@ -164,16 +195,21 @@ namespace LibararyWebApplication.Controllers
 
 
 
+
         // DELETE: api/Books/5
+        [Authorize(Roles = "staff,admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _context.Books.Include(s => s.BookCopies).FirstOrDefaultAsync(s => s.Id == id);
             if (book == null)
             {
                 return NotFound();
             }
-
+            if(book.BookCopies.Count() > 0)
+            {
+                return BadRequest();
+            }
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
 
@@ -186,15 +222,29 @@ namespace LibararyWebApplication.Controllers
         }
     }
 }
+
+
 public class BookDTO
 {
+    [Required(ErrorMessage = "Tên sách không được để trống.")]
     public string Name { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "Tác giả không hợp lệ.")]
     public int AuthorId { get; set; }
+
+    [Required(ErrorMessage = "Ảnh không được để trống.")]
     public string Image { get; set; }
+
+    [Required(ErrorMessage = "Ngày phát hành không được để trống.")]
     public DateTime PublicDate { get; set; }
+
+    [MinLength(1, ErrorMessage = "Phải chọn ít nhất một thể loại.")]
     public List<int> CategoryIds { get; set; } = new();
 
+    [Range(1, 1000, ErrorMessage = "Số lượng bản sao phải từ 1 đến 1000.")]
+    public int NumberOfCopies { get; set; }
 }
+
 public class BookViewDTO
 {
     public int Id { get; set; }

@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Book.ImageBase64" class="form-label fw-bold">Base64 Image (optional)</label>
+                    <label asp-for="Book.ImageBase64" class="form-label fw-bold">Image (optional)</label>
                     <input asp-for="Book.ImageBase64" class="form-control" placeholder="Paste Base64 string here..." />
                     <span asp-validation-for="Book.ImageBase64" class="text-danger"></span>
                 </div>
@@ -60,11 +60,17 @@
                     <input asp-for="Book.PublishedDate" type="date" class="form-control" />
                     <span asp-validation-for="Book.PublishedDate" class="text-danger"></span>
                 </div>
-
+                <div class="mb-3">
+                    <label asp-for="NumberOfCopies" class="form-label fw-bold">Number of Copies</label>
+                    <input asp-for="NumberOfCopies" class="form-control" type="number" min="1" value="1" max="50" />
+                    <span asp-validation-for="NumberOfCopies" class="text-danger"></span>
+                </div>
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-success">💾 Save</button>
                     <a asp-page="Index" class="btn btn-secondary">↩️ Back to List</a>
                 </div>
+
+
             </form>
         </div>
     </div>

@@ -1,66 +1,96 @@
 @page
 @model LibararyWebApplication.Pages.Librarian.RentalManagement.IndexModel
-
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Rental Management";
+    Layout = "~/Pages/Shared/_LibbraLayout.cshtml";
 }
 <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
-
-<div class="container mt-4">
-    <div class="card shadow border-0 rounded-4">
-        <div class="card-header bg-primary text-white rounded-top-4">
-            <h4 class="mb-0">📚 Rental Management</h4>
+<div class="container mt-5">
+    <div class="card shadow rounded-4">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">📋 Order Management</h4>
         </div>
-        <form method="get" class="row mb-3 g-2">
-            <div class="col-md-4">
-                <input type="text" name="SearchUser" class="form-control" placeholder="🔍 Search by User..." value="@Model.SearchUser" />
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-secondary w-100">Search</button>
-            </div>
-        </form>
+        <div class="card-body">
+            <!-- Search Form -->
+            <form method="get" class="row mb-4 g-2">
+                <div class="col-md-4">
+                    <input type="text" name="SearchUser" class="form-control" placeholder="🔍 Search by User..." value="@Model.SearchUser" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100">Search</button>
+                </div>
+            </form>
 
-        <div class="card-body table-responsive">
-            <table class="table table-striped table-hover align-middle text-center">
-                <thead class="table-light">
-                    <tr>
-                        <th>Status</th>
-                        <th>Rental Date</th>
-                        <th>Due Date</th>
-                        <th>Created At</th>
-                        <th>User</th>
-                        <th>Book</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Rental)
-                    {
-                        <tr>
-                            <form method="post" asp-page-handler="UpdateStatus" class="align-middle">
-                                <input type="hidden" name="Id" value="@item.Id" />
-                            <td>
-                                <select name="Status" class="form-select form-select-sm">
-                                    <option value="Pending" selected="@("Pending" == item.Status)">Pending</option>
-                                    <option value="Approved" selected="@("Approved" == item.Status)">Approved</option>
-                                    <option value="Returned" selected="@("Returned" == item.Status)">Returned</option>
-                                </select>
-                            </td>
-                            <td>@item.RentalDate.ToString("MM/dd/yyyy")</td>
-                            <td>@item.DueDate.ToString("MM/dd/yyyy")</td>
-                            <td>@item.CreatedAt.ToString("MM/dd/yyyy")</td>
+            @if (Model.Rental != null && Model.Rental.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle">
+                        <thead class="table-secondary text-center">
+                            <tr>
+                                <th>Id</th>
+                                <th>Status</th>
+                                <th>Rental Date</th>
+                                <th>Due Date</th>
 
-                            <td>@item.UserName</td>
-                            <td>@item.BookName</td>
-                            <td class="d-flex justify-content-center gap-2">
-                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Save changes">💾</button>
-                                <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Delete rental">🗑️</a>
-                            </td>
-                            </form>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                                <th>User</th>
+                                <th>Book</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Rental)
+                            {
+                                <tr>
+                                    <form method="post" asp-page-handler="UpdateStatus" class="contents">
+                                        <input type="hidden" name="Id" value="@item.Id" />
+                                        <input type="hidden" name="CopiesID" value="@item.BookCopyId" />
+
+                                    <td class="text-center">@item.Id</td>
+                                    <td class="text-center">
+                                        <select name="Status" class="form-select form-select-sm" @(item.Status == "Returned" ? "disabled" : "")>
+                                            <option value="Pending"
+                                                    selected="@("Pending" == item.Status)"
+                                                    disabled="@(item.Status == "Approved" || item.Status == "Returned")">
+                                                Pending
+                                            </option>
+                                            <option value="Approved"
+                                                    selected="@("Approved" == item.Status)"
+                                                    disabled="@(item.Status == "Returned")">
+                                                Approved
+                                            </option>
+                                            <option value="Returned"
+                                                    selected="@("Returned" == item.Status)">
+                                                Returned
+                                            </option>
+                                        </select>
+                                    </td>
+
+                                    <td class="text-center">@item.RentalDate.ToString("MM/dd/yyyy")</td>
+                                    <td class="text-center">@item.DueDate.ToString("MM/dd/yyyy")</td>
+
+                                    <td>@item.UserName</td>
+                                    <td>@item.BookName</td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button type="submit" class="btn btn-outline-primary btn-sm" title="Save changes">💾</button>
+                                            <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm"
+                                               onclick="return confirm('Are you sure you want to delete this rental?');" title="Delete rental">🗑️</a>
+                                        </div>
+                                    </td>
+                                    </form>
+
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">No rentals found in the system.</div>
+            }
         </div>
     </div>
 </div>

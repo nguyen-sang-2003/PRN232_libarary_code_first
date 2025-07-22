@@ -7,107 +7,102 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibararyWebApplication.Pages.Librarian.BookManagement
 {
     public class CreateModel : PageModel
     {
         private readonly PrnContext _context;
-       public HttpClient client = new HttpClient();
-        public CreateModel(PrnContext context, HttpClient client)
+        private readonly HttpClient _httpClient;
+
+        public CreateModel(PrnContext context, HttpClient httpClient)
         {
             _context = context;
-            this.client = client;
-
-        }
-        public List<Category> AllCategories { get; set; }
-
-        [BindProperty]
-        public List<int> SelectedCategoryIds { get; set; } = new List<int>();
-        public async Task<IActionResult> OnGetAsync()
-        {
-            string existing_token;
-
-            existing_token = Request.Headers.Authorization;
-            if (existing_token == null)
-            {
-                existing_token = Request.Cookies["token"];
-            }
-            if (existing_token == null)
-            {
-                return Redirect("/login");
-            }
-
-            if (existing_token.StartsWith("Bearer "))
-            {
-                existing_token = existing_token.Substring("Bearer ".Length);
-            }
-
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(existing_token);
-
-            var username = jwtToken.Claims.FirstOrDefault(c =>
-                                c.Type == ClaimTypes.Name || c.Type == JwtRegisteredClaimNames.Sub)
-                                ?.Value;
-
-            if (string.IsNullOrEmpty(username))
-            {
-                return Redirect("/login");
-            }
-
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", existing_token);
-            await LoadCategoriesAsync();
-            return Page();
+            _httpClient = httpClient;
         }
 
         [BindProperty]
         public Book Book { get; set; } = default!;
 
+        [BindProperty]
+        public int NumberOfCopies { get; set; } = 1;
+
+        [BindProperty]
+        public List<int> SelectedCategoryIds { get; set; } = new List<int>();
+
+        public List<Category> AllCategories { get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            var token = GetTokenFromRequest();
+            if (token == null) return Redirect("/login");
+
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            await LoadCategoriesAsync();
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
+            var token = GetTokenFromRequest();
+            if (token == null) return Redirect("/login");
 
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            using HttpClient client = new HttpClient();
-
-            // Lấy base URL của API (bạn có thể hardcode hoặc cấu hình nếu cần)
             var apiEndpoint = $"http://{HttpContext.Request.Host}/api/Books";
 
-            // Chuyển Book sang BookDTO
             var dto = new BookDTO
             {
                 Name = Book.Title,
                 AuthorId = Book.AuthorId,
                 Image = Book.ImageBase64,
                 PublicDate = Book.PublishedDate,
-                CategoryIds = SelectedCategoryIds
+                CategoryIds = SelectedCategoryIds,
+                NumberOfCopies = this.NumberOfCopies // ➕ Thêm dòng này
             };
 
-            var response = await client.PostAsJsonAsync(apiEndpoint, dto);
+            var response = await _httpClient.PostAsJsonAsync(apiEndpoint, dto);
 
             if (response.IsSuccessStatusCode)
             {
-
                 return RedirectToPage("./Index");
             }
-            await LoadCategoriesAsync();
-            // Nếu gọi API lỗi, trả về thông báo lỗi
+
             ModelState.AddModelError(string.Empty, "Lỗi khi tạo sách qua API.");
+            await LoadCategoriesAsync();
             return Page();
         }
+
         private async Task LoadCategoriesAsync()
         {
+            var apiBase = $"http://{HttpContext.Request.Host}";
+            AllCategories = await _httpClient.GetFromJsonAsync<List<Category>>($"{apiBase}/api/Categories") ?? new List<Category>();
 
-
-            string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}";
-            var category = await client.GetFromJsonAsync<List<Category>>($"{api_endpoint}/api/Categories");
-
-            AllCategories = category ?? new List<Category>();
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Name");
-            ViewData["Categories"] = new SelectList(AllCategories, "Id", "Name");
+            var authors = await _context.Authors.ToListAsync();
+            ViewData["AuthorId"] = new SelectList(authors, "Id", "Name");
         }
 
+        private string? GetTokenFromRequest()
+        {
+            string? token = Request.Headers.Authorization;
+            if (string.IsNullOrEmpty(token))
+                token = Request.Cookies["token"];
+
+            if (string.IsNullOrEmpty(token)) return null;
+
+            if (token.StartsWith("Bearer "))
+                token = token.Substring("Bearer ".Length);
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            var username = jwtToken.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.Name || c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+            return string.IsNullOrEmpty(username) ? null : token;
+        }
     }
-
-
 }

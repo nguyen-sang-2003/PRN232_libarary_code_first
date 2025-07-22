@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("user-details").innerText = JSON.stringify(user, null, 2);
                 document.getElementById("login-form").style.display = "none";
                 set_token(token); // Ensure token is set in localStorage and cookies
+                window.location.href = "/profile";
             })
             .catch(() => {
                 console.error(arguments);

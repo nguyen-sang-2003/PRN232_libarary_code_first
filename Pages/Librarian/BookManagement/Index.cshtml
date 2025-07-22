@@ -3,7 +3,11 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
+
     ViewData["Title"] = "Book Management";
+
+    Layout = "~/Pages/Shared/_LibbraLayout.cshtml";
+
 }
 
 <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
@@ -24,7 +28,7 @@
                             <tr>
                                 <th>Id</th>
                                 <th>Title</th>
-                                <th>Cover Image</th>
+                                <th>Image</th>
                                 <th>Published Date</th>
                                 <th>Author</th>
                                 <th>Categories</th>
@@ -41,7 +45,7 @@
                                     <td class="text-center">
                                         @if (!string.IsNullOrEmpty(item.ImageBase64))
                                         {
-                                            <img src="data:image/jpeg;base64,@item.ImageBase64" alt="Book Cover" width="60" class="rounded shadow-sm" />
+                                            <img src="@item.ImageBase64" alt="Book Cover" width="60" class="rounded shadow-sm" />
                                         }
                                         else
                                         {
@@ -71,4 +75,13 @@
             }
         </div>
     </div>
+
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const errorMessage = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
+        if (errorMessage && errorMessage.length > 0) {
+            alert(errorMessage);
+        }
+    });
+</script>

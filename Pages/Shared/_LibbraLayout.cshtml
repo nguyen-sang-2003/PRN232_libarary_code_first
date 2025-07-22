@@ -1,0 +1,146 @@
+@*
+    Admin Layout with Sidebar and Header
+*@
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@{
+    string token = Context.Request.Headers["Authorization"];
+
+    if (string.IsNullOrEmpty(token))
+    {
+        token = Context.Request.Cookies["token"];
+    }
+
+    string? username = null;
+    string? role = null;
+
+    if (!string.IsNullOrEmpty(token))
+    {
+        if (token.StartsWith("Bearer "))
+        {
+            token = token.Substring("Bearer ".Length);
+        }
+
+        var handler = new JwtSecurityTokenHandler();
+        try
+        {
+            var jwtToken = handler.ReadJwtToken(token);
+            username = jwtToken.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.Name)?.Value;
+            role = jwtToken.Claims.FirstOrDefault(c =>
+            c.Type == ClaimTypes.Role)?.Value;
+        }
+        catch
+        {
+            // Token invalid, ignore
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+        }
+
+            .sidebar a {
+                color: white;
+                text-decoration: none;
+            }
+
+                .sidebar a:hover {
+                    background-color: #495057;
+                    display: block;
+                }
+
+        .main-content {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar d-flex flex-column p-3">
+        <h4 class="text-white">📘 @(role.ToUpper())</h4>
+        <hr class="border-light" />
+
+        @if (role == "admin")
+        {
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-page="/UserAdmin">👤 User Manager</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-page="/RuleManager/Index">📚 Rule Manager</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-page="#">📖 Book Manager</a>
+                </li>
+            </ul>
+        }else if (role == "staff")
+        {
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/Librarian/BookManagement">📖 Book Manager</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/Librarian/RentalManagement">🛒 Order Manager</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/Librarian/CategoriesManagement">📚 Categories Manager</a>
+                </li>
+            </ul>
+        }
+
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content d-flex flex-column w-100">
+        <!-- Header -->
+        <header class="bg-primary text-white px-4 py-2 d-flex justify-content-between align-items-center">
+            @* <h5 class="mb-0">@ViewData["Title"]</h5> *@
+            <h5 class="mb-0"></h5>
+            <div>
+                <span class="me-3">👋 Hello, @username</span>
+                <button type="button" class="btn btn-outline-light btn-sm" onclick="handleLogout()">Logout</button>
+            </div>
+        </header>
+
+        <!-- Body content -->
+        <main class="p-4">
+            @RenderBody()
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center text-muted py-3 border-top mt-auto bg-light">
+            <small>&copy; 2025 Library Management</small>
+        </footer>
+    </div>
+
+    <!-- JS gọi logout -->
+    <script type="module">
+        import { invalidate_token } from '/js/utils.mjs';
+
+        window.handleLogout = async function () {
+            invalidate_token(); // Xoá token
+            window.location.href = "/login"; // Chuyển hướng thẳng
+        }
+    </script>
+    @* Fix lỗi Scripts section *@
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
