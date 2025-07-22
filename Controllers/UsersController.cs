@@ -54,6 +54,23 @@ namespace LibararyWebApplication.Controllers
 
             return user;
         }
+        [HttpGet("by-email/{email}")]
+        public async Task<ActionResult<User>> GetUserByEmail(string? email)
+        {
+            Console.WriteLine("Received email: " + email);
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("Email is required");
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
 
         // PUT: api/Users/5
         [HttpPut("{id}")]

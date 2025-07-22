@@ -77,8 +77,6 @@
         <h4 class="text-white">📘 @(role.ToUpper())</h4>
         <hr class="border-light" />
 
-        @if (role == "admin")
-        {
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link text-white" asp-page="/UserAdmin">👤 User Manager</a>
@@ -86,25 +84,7 @@
                 <li class="nav-item">
                     <a class="nav-link text-white" asp-page="/RuleManager/Index">📚 Rule Manager</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-page="#">📖 Book Manager</a>
-                </li>
             </ul>
-        }else if (role == "librarian")
-        {
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-page="#">📚 Book Manager</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-page="#">🛒 Order Manager</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-page="#">💰 Fines Manager</a>
-                </li>
-            </ul>
-        }
-
     </div>
 
     <!-- Main content -->

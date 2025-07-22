@@ -1,0 +1,52 @@
+﻿@page
+@model LibararyWebApplication.Pages.CreateUserPageModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create User Manager";
+}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">➕ Create New User</h4>
+        </div>
+        <div class="card-body">
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label">👤 Username</label>
+                    <input asp-for="user.Username" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">📧 Email</label>
+                    <input asp-for="user.Email" type="email" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">🔒 Password</label>
+                    <input asp-for="user.Password" type="password" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">🎭 Role</label>
+                    <select asp-for="user.Role" class="form-select" required>
+                        <option value="user">User</option>
+                        <option value="staff">Staff</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-page="/UserAdmin" class="btn btn-secondary ms-2">⬅ Back</a>
+            </form>
+        </div>
+    </div>
+</div>
