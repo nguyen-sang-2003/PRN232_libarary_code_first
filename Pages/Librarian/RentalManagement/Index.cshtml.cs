@@ -24,7 +24,11 @@ namespace LibararyWebApplication.Pages.Librarian.RentalManagement
 
         [BindProperty(SupportsGet =true)]
         public string Status {  get; set; }
+
         [BindProperty(SupportsGet = true)]
+        public int CopiesID { get; set; }
+        [BindProperty(SupportsGet = true)]
+
         public int Id { get; set; }
         public IList<RentalDTO> Rental { get;set; } = default!;
         [BindProperty(SupportsGet = true)]
@@ -96,7 +100,7 @@ namespace LibararyWebApplication.Pages.Librarian.RentalManagement
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             string api_endpoint = $"http://{HttpContext.Request.Host.ToString()}"; // đổi theo địa chỉ backend bạn chạy
-            var respone = await client.PutAsync($"{api_endpoint}/api/Rentals/{Id}?Status={Status}",null);
+            var respone = await client.PutAsJsonAsync($"{api_endpoint}/api/Rentals/{Id}?Status={Status}", CopiesID);
             Rental = await client.GetFromJsonAsync<List<RentalDTO>>($"{api_endpoint}/api/Rentals");
             return Page();
         }
